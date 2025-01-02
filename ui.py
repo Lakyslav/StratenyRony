@@ -50,6 +50,6 @@ class ButtonUI:
         Vykreslí tlačidlo na obrazovku.
         """
         # Nastaví farbu tlačidla podľa toho, či je stlačené alebo myš drží tlačidlo
-        colour = globals.GREEN if self.mouseHeld or self.keyHeld else globals.WHITE
+        colour = globals.GREEN if self.mouseHeld or self.keyHeld else globals.DARK_GREY
         # Vykreslí text na tlačidlo
         utils.drawText(screen, self.text, self.x, self.y, colour, alpha)

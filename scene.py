@@ -32,6 +32,10 @@ class MainMenuScene(Scene):
         self.tutorial_button = ui.ButtonUI(pygame.K_t, '[Návod]', 50, 300)  # Tlačidlo pre návod
         self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Ukončiť hru]', 50, 350)
 
+        self.background = pygame.image.load('images\menu\orig.png').convert()
+        self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
+
+
     def onEnter(self):
         # Hranie hudby pri vstupe do hlavného menu
         globals.soundManager.playMusicFade('menu')
@@ -56,9 +60,9 @@ class MainMenuScene(Scene):
         self.esc.update(inputStream)
 
     def draw(self, sm, screen):
+        screen.blit(self.background, (0, 0))
         # Nastavenie pozadia a vykreslenie názvu menu
-        screen.fill(globals.DARK_GREY)
-        utils.drawText(screen, 'Hlavné Menu', 50, 50, globals.WHITE, 255)
+        utils.drawText(screen, 'STRATENÝ RONY', 50, 50, globals.DARK_GREY, 255)
 
         # Vykreslenie tlačidiel v menu
         self.enter.draw(screen)
@@ -66,6 +70,7 @@ class MainMenuScene(Scene):
         self.tutorial_button.draw(screen)  # Vykreslenie tlačidla pre návod
         self.esc.draw(screen)
 
+        
 
 # Scéna s návodom
 class TutorialScene(Scene):
@@ -87,6 +92,9 @@ class TutorialScene(Scene):
             "E - Odialenie",
         ]
 
+        self.background = pygame.image.load('images\menu\orig.png').convert()
+        self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
+
     def input(self, sm, inputStream):
         # Akcia pre návrat do hlavného menu
         if self.menu_button.on or inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
@@ -98,16 +106,16 @@ class TutorialScene(Scene):
         self.menu_button.update(inputStream)
 
     def draw(self, sm, screen):
-        screen.fill(globals.DARK_GREY)
+        screen.blit(self.background, (0, 0))
 
         # Vykreslenie názvu návodu
-        title_surface = self.title_font.render("Návod na ovládanie", True, globals.WHITE)
+        title_surface = self.title_font.render("Návod na ovládanie", True, globals.DARK_GREY)
         screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 50))
 
         # Vykreslenie inštrukcií na ovládanie
         y_offset = 100
         for line in self.controls_text:
-            control_surface = self.option_font.render(line, True, globals.WHITE)
+            control_surface = self.option_font.render(line, True, globals.DARK_GREY)
             screen.blit(control_surface, (screen.get_width() // 2 - control_surface.get_width() // 2, y_offset))
             y_offset += 40  # Nastavenie rozostupu medzi riadkami
 
@@ -137,6 +145,9 @@ class SettingsScene(Scene):
         # Fonty pre texty
         self.title_font = pygame.font.Font(None, 40)
         self.option_font = pygame.font.Font(None, 30)
+
+        self.background = pygame.image.load('images\menu\orig.png').convert()
+        self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
     def input(self, inputStream):
         if self.increase_sfx_button.is_pressed():
@@ -202,7 +213,7 @@ class SettingsScene(Scene):
         self.menu_button.update(inputStream)
 
     def draw(self, sm, screen):
-        screen.fill(globals.DARK_GREY)
+        screen.blit(self.background, (0, 0))
 
         # Vykreslenie názvu nastavení
         title_surface = self.title_font.render("Nastavenia", True, (255, 255, 255))
@@ -233,6 +244,9 @@ class LevelSelectScene(Scene):
         self.d_button = ui.ButtonUI(pygame.K_d, '[D]', 150, 250)  # Tlačidlo pre nasledujúcu úroveň
         self.enter_button = ui.ButtonUI(pygame.K_RETURN, '[Spustiť]', 50, 350)  # Tlačidlo na výber úrovne
 
+        self.background = pygame.image.load('images\menu\orig.png').convert()
+        self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
+
     def onEnter(self):
         # Prehrávanie hudby pre menu
         globals.soundManager.playMusicFade('menu')
@@ -261,8 +275,8 @@ class LevelSelectScene(Scene):
 
     def draw(self, sm, screen):
         # Nastavenie pozadia
-        screen.fill(globals.DARK_GREY)
-        utils.drawText(screen, 'Výber úrovní', 50, 50, globals.WHITE, 255)
+        screen.blit(self.background, (0, 0))
+        utils.drawText(screen, 'Výber úrovní', 50, 50, globals.DARK_GREY, 255)
         
         # Vykreslenie tlačidiel
         self.esc.draw(screen)
