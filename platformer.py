@@ -8,6 +8,8 @@ import inputstream
 import soundmanager 
 
 
+
+
 # Inicializácia pygame a ostatných komponentov
 pygame.init()  # Inicializácia pygame knižnice
 screen = pygame.display.set_mode(globals.SCREEN_SIZE)  # Nastavenie veľkosti okna

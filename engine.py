@@ -203,13 +203,12 @@ class CameraSystem(System):
     # Aktualizácia entity, ktorá má kameru
     def updateEntity(self, screen, inputStream, entity):
 
-        # Prilbíženie
+        # Priblíženie a oddialenie kamery
         if entity.intention is not None:
             if entity.intention.zoomIn:
                 entity.camera.zoomLevel += 0.01
             if entity.intention.zoomOut:
                 entity.camera.zoomLevel -= 0.01
-
 
         # Nastavenie orezávacieho obdlžníka (klipovacieho)
         cameraRect = entity.camera.rect
@@ -238,7 +237,11 @@ class CameraSystem(System):
         # Vyplnenie pozadia kamery
         screen.fill(globals.BLACK)
 
-        # Vykreslenie platforiem (vo farbe horčice)
+        # Načítanie obrázka platformy
+        platform_image = globals.world.platform_image
+        platform_scaled = pygame.transform.scale(platform_image, (50, 50))  # Zmena veľkosti na 50x50
+
+        # Vykreslenie platforiem (na mieste horčicovej farby)
         for p in globals.world.platforms + globals.world.winPlatforms:
             newPosRect = pygame.Rect(
                 (p.x * entity.camera.zoomLevel) + offsetX,
@@ -247,7 +250,11 @@ class CameraSystem(System):
                 p.h * entity.camera.zoomLevel
             )
             if p in globals.world.platforms:
-                pygame.draw.rect(screen, globals.MUSTARD, newPosRect)
+                # Vykreslenie platformy s obrázkom (môžeš pridať opakovanie, ak je to potrebné)
+                for i in range(newPosRect.width // 50):  # opakovanie podľa šírky platformy
+                    for j in range(newPosRect.height // 50):  # opakovanie podľa výšky platformy
+                        screen.blit(platform_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
+
             if p in globals.world.winPlatforms:
                 pygame.draw.rect(screen, globals.GREEN, newPosRect)
 
@@ -259,7 +266,6 @@ class CameraSystem(System):
                 (e.position.rect.x * entity.camera.zoomLevel) + offsetX,
                 (e.position.rect.y * entity.camera.zoomLevel) + offsetY,
                 e.direction == 'left', False, entity.camera.zoomLevel, 255)
-
 
         # Vykreslenie HUD pre entitu (skóre a životy)
         if entity.score is not None:
