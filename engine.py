@@ -237,9 +237,11 @@ class CameraSystem(System):
         # Vyplnenie pozadia kamery
         screen.fill(globals.BLACK)
 
-        # Načítanie obrázka platformy
+        # Načítanie obrázkov platformy a víťaznej platformy
         platform_image = globals.world.platform_image
-        platform_scaled = pygame.transform.scale(platform_image, (50, 50))  # Zmena veľkosti na 50x50
+        win_image = globals.world.win_image
+        platform_scaled = pygame.transform.scale(platform_image, (50, 50))  # Zmena veľkosti platformy na 50x50
+        win_scaled = pygame.transform.scale(win_image, (50, 50))  # Zmena veľkosti víťaznej platformy na 50x50
 
         # Vykreslenie platforiem (na mieste horčicovej farby)
         for p in globals.world.platforms + globals.world.winPlatforms:
@@ -249,14 +251,18 @@ class CameraSystem(System):
                 p.w * entity.camera.zoomLevel,
                 p.h * entity.camera.zoomLevel
             )
+
             if p in globals.world.platforms:
-                # Vykreslenie platformy s obrázkom (môžeš pridať opakovanie, ak je to potrebné)
+                # Vykreslenie platformy s obrázkom (opakujeme podľa šírky a výšky platformy)
                 for i in range(newPosRect.width // 50):  # opakovanie podľa šírky platformy
                     for j in range(newPosRect.height // 50):  # opakovanie podľa výšky platformy
                         screen.blit(platform_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
 
             if p in globals.world.winPlatforms:
-                pygame.draw.rect(screen, globals.GREEN, newPosRect)
+                # Vykreslenie víťaznej platformy s obrázkom
+                for i in range(newPosRect.width // 50):
+                    for j in range(newPosRect.height // 50):
+                        screen.blit(win_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
 
         # Vykreslenie entít
         for e in globals.world.entities:

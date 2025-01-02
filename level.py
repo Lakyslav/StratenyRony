@@ -4,7 +4,7 @@ import engine
 import globals
 
 class Level:
-    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, platform_image=None):
+    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, platform_image=None,win_image=None):
         # Inicializácia úrovne s predvolenými hodnotami, ak nie sú poskytnuté
         self.platforms = platforms if platforms is not None else []  # Platformy
         self.winPlatforms = winPlatforms if winPlatforms is not None else []  # Výherné platformy
@@ -14,6 +14,7 @@ class Level:
         self.deathPlatforms = deathPlatforms if deathPlatforms is not None else []  # Platformy, ktoré spôsobujú smrť
         self.invisiblePlatforms = invisiblePlatforms if invisiblePlatforms is not None else []  # Neviditeľné platformy
         self.platform_image = platform_image  # Pridanie parametra platform_image
+        self.win_image = win_image  # Pridanie parametra win_image
 
     # Skontroluje, či bola úroveň vyhraná
     def isWon(self):
@@ -79,6 +80,7 @@ def loadLevel(levelNumber):
                 globals.player1
             ],
             platform_image = pygame.image.load('images\platformy\platforma_000.png'),
+            win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
@@ -107,6 +109,7 @@ def loadLevel(levelNumber):
                 pygame.Rect(50, -300, 50, 600)
             ],
             platform_image = pygame.image.load('images\platformy\platforma_001.png'),
+            win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
@@ -133,6 +136,7 @@ def loadLevel(levelNumber):
                 pygame.Rect(50, -300, 50, 600)
             ],
             platform_image = pygame.image.load('images\platformy\platforma_002.png'),
+            win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
