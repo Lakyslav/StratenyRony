@@ -4,7 +4,7 @@ import engine
 import globals
 
 class Level:
-    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, platform_image=None,win_image=None):
+    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, platform_image=None,win_image=None, backgrounds=None):
         # Inicializácia úrovne s predvolenými hodnotami, ak nie sú poskytnuté
         self.platforms = platforms if platforms is not None else []  # Platformy
         self.winPlatforms = winPlatforms if winPlatforms is not None else []  # Výherné platformy
@@ -15,6 +15,7 @@ class Level:
         self.invisiblePlatforms = invisiblePlatforms if invisiblePlatforms is not None else []  # Neviditeľné platformy
         self.platform_image = platform_image  # Pridanie parametra platform_image
         self.win_image = win_image  # Pridanie parametra win_image
+        self.backgrounds = backgrounds if backgrounds is not None else []
 
     # Skontroluje, či bola úroveň vyhraná
     def isWon(self):
@@ -78,6 +79,18 @@ def loadLevel(levelNumber):
                 utils.makeEnemy(940,275),
                 utils.makeEnemy(605,275),
                 globals.player1
+            ],
+            backgrounds = [
+
+                (pygame.image.load(r'images/pozadia/level1_1.png').convert_alpha(), 0.2),
+                (pygame.image.load(r'images/pozadia/level1_2.png').convert_alpha(), 0.3),
+                (pygame.image.load(r'images/pozadia/level1_10.png').convert_alpha(), 0.8),
+                (pygame.image.load(r'images/pozadia/level1_3.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level1_5.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level1_6.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level1_7.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level1_8.png').convert_alpha(), 1),
+
             ],
             platform_image = pygame.image.load('images\platformy\platforma_000.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),

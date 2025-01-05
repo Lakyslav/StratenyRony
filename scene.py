@@ -343,7 +343,7 @@ class GameScene(Scene):
 
     def draw(self, sm, screen):
         # Nastavenie pozadia
-        screen.fill(globals.DARK_GREY)
+
 
         # Vykreslenie obsahu hry (entít, atď.)
         self.cameraSystem.update(screen)
@@ -389,7 +389,7 @@ class WinScene(Scene):
             sm.scenes[-2].draw(sm, screen)
 
         # Vykreslenie polopriehľadného pozadia
-        bgSurf = pygame.Surface((830, 830))
+        bgSurf = pygame.Surface(globals.SCREEN_SIZE)
         bgSurf.fill((globals.BLACK))
         utils.blit_alpha(screen, bgSurf, (0, 0), self.alpha * 0.7)
 
@@ -445,7 +445,7 @@ class LoseScene(Scene):
             sm.scenes[-2].draw(sm, screen)
 
         # Vykreslenie polopriehľadného pozadia
-        bgSurf = pygame.Surface((700, 500))
+        bgSurf = pygame.Surface(globals.SCREEN_SIZE)
         bgSurf.fill((globals.BLACK))
         utils.blit_alpha(screen, bgSurf, (0, 0), self.alpha * 0.7)
 

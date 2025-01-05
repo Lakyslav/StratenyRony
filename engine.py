@@ -215,6 +215,23 @@ class CameraSystem(System):
         clipRect = pygame.Rect(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height)
         screen.set_clip(clipRect)
 
+        offsetX = cameraRect.x + cameraRect.w / 2 - (entity.camera.worldX * entity.camera.zoomLevel)
+        offsetY = cameraRect.y + cameraRect.h / 2 - (entity.camera.worldY * entity.camera.zoomLevel)
+
+        # Draw parallax backgrounds
+        if globals.world.backgrounds:
+            for bg_image, speed in globals.world.backgrounds:
+                bg_width = bg_image.get_width()
+                bg_height = bg_image.get_height()
+                
+                # Scale the background to the screen size
+                scaled_bg = pygame.transform.scale(bg_image, globals.SCREEN_SIZE)
+
+                # Draw the scaled background repeatedly to create the parallax effect
+                for x in range((cameraRect.width // bg_width) + 2):
+                    draw_x = (x * globals.SCREEN_SIZE[0]) - (entity.camera.worldX * speed)
+                    screen.blit(scaled_bg, (draw_x, 0))
+
         # Aktualizácia pozície kamery, ak sleduje nejakú entitu
         if entity.camera.entityToTrack is not None:
             trackedEntity = entity.camera.entityToTrack
@@ -231,11 +248,10 @@ class CameraSystem(System):
             entity.camera.worldY = (currentY * 0.95) + (targetY * 0.05)
         
         # Výpočet ofsetov pre správne vykreslenie
-        offsetX = cameraRect.x + cameraRect.w / 2 - (entity.camera.worldX * entity.camera.zoomLevel)
-        offsetY = cameraRect.y + cameraRect.h / 2 - (entity.camera.worldY * entity.camera.zoomLevel)
+
 
         # Vyplnenie pozadia kamery
-        screen.fill(globals.BLACK)
+        '''screen.fill(globals.BLACK)'''
 
         # Načítanie obrázkov platformy a víťaznej platformy
         platform_image = globals.world.platform_image

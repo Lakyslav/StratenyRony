@@ -9,7 +9,8 @@ lastCompletedLevel = 1  # Posledná dokončená úroveň
 curentLevel = 1  # Aktuálna úroveň (počiatočná)
 
 # Rozmery obrazovky
-SCREEN_SIZE = (700, 500)  # Veľkosť obrazovky (šírka, výška)
+#1024×576
+SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)
 
 # Definovanie farieb pomocou RGB hodnôt
 DARK_GREY = (50, 50, 50)  # Tmavo šedá farba
