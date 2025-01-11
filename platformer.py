@@ -55,3 +55,9 @@ while running:
 
 # Ukončenie pygame po ukončení hry
 pygame.quit()
+
+
+
+
+
+

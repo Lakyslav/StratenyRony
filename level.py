@@ -121,6 +121,13 @@ def loadLevel(levelNumber):
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
                 pygame.Rect(50, -300, 50, 600)
             ],
+                        backgrounds = [
+
+                (pygame.image.load(r'images/pozadia/level2_1.png').convert_alpha(), 0.2),
+                (pygame.image.load(r'images/pozadia/level2_2.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level2_3.png').convert_alpha(), 0.7),
+                (pygame.image.load(r'images/pozadia/level2_4.png').convert_alpha(), 1),
+            ],
             platform_image = pygame.image.load('images\platformy\platforma_001.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
@@ -132,27 +139,57 @@ def loadLevel(levelNumber):
                 pygame.Rect(100, 300, 400, 50),
                 pygame.Rect(350, 250, 50, 50),
                 pygame.Rect(400, 200, 50, 100),
+                pygame.Rect(600, 150, 400, 50),
+                pygame.Rect(1050, 275, 200, 50),
+                pygame.Rect(1300, 225, 100, 50),
+                pygame.Rect(1450, 175, 100, 50),
+                pygame.Rect(1750, 125, 200, 50),
+                pygame.Rect(2000, 75, 150, 50),
+                pygame.Rect(2200, 200, 250, 50),
+                pygame.Rect(2500, 270, 300, 50),
+                pygame.Rect(2800, 200, 200, 50),
+                pygame.Rect(3000, 150, 200, 50),
+                pygame.Rect(3200, 100, 150, 50),
+                pygame.Rect(3400, 50, 250, 50),
             ],
             winPlatforms= [
-                pygame.Rect(650, 350, 50, 50)
+                pygame.Rect(3500, 0, 50, 50)
             ],
             deathPlatforms = [
                 pygame.Rect(0, 400, 2000, 50)
             ],
             entities = [
                 utils.makeGranule(100, 200),
-                # pohybujúci nepriateľ pozdĺž osi X
-                utils.makeEnemyPatrol(450, 200, axis='x', distance=200),  
+                utils.makeEnemyPatrol(450, 200, axis='x', distance=200),
+                utils.makeEnemyPatrol(750, 50, axis='y', distance=300, patrol_speed=3),
+                utils.makeEnemyPatrol(1625, 200, axis='y', distance=350, patrol_speed=4),
+                utils.makeEnemyPatrol(1750, 200, axis='x', distance=250, patrol_speed=3),
+                utils.makeEnemy(1850, 100),
+                utils.makeEnemy(2545, 250),
+                utils.makeEnemy(2850, 175),
+                utils.makeEnemy(3050, 125),
+                utils.makeEnemy(3250, 75),
                 globals.player1
             ],
-            invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
+            invisiblePlatforms = [
                 pygame.Rect(50, -300, 50, 600)
+            ],
+            backgrounds = [
+                (pygame.image.load(r'images/pozadia/level3_1.png').convert_alpha(), 0.2),
+                (pygame.image.load(r'images/pozadia/level3_2.png').convert_alpha(), 0.3),
+                (pygame.image.load(r'images/pozadia/level3_3.png').convert_alpha(), 0.5),
+                (pygame.image.load(r'images/pozadia/level3_4.png').convert_alpha(), 0.6),
+                (pygame.image.load(r'images/pozadia/level3_5.png').convert_alpha(), 0.8),
+                (pygame.image.load(r'images/pozadia/level3_6.png').convert_alpha(), 1),
             ],
             platform_image = pygame.image.load('images\platformy\platforma_002.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
+
+
+
 
     # Resetovanie všetkých entít v úrovni
     for entity in globals.world.entities:

@@ -5,8 +5,8 @@ import soundmanager  # Importovanie modulu na správu zvukov
 world = None  # Aktuálny svet (úroveň)
 
 maxLevel = 3  # Maximálny počet úrovní
-lastCompletedLevel = 1  # Posledná dokončená úroveň
-curentLevel = 1  # Aktuálna úroveň (počiatočná)
+lastCompletedLevel = 3  # Posledná dokončená úroveň
+curentLevel = 3  # Aktuálna úroveň (počiatočná)
 
 # Rozmery obrazovky
 #1024×576
