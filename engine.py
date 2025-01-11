@@ -187,7 +187,7 @@ class BattleSystem(System):
                     globals.soundManager.playSound('hurt')
                     entity.battle.lives -= 1
                     # reset pozície hráča
-                    entity.position.rect.x = 300
+                    entity.position.rect.x = 100
                     entity.position.rect.y = 0
                     entity.speed = 0 
                     entity.acceleration = 0.2
@@ -196,7 +196,7 @@ class BattleSystem(System):
                 globals.soundManager.playSound('hurt')  # Zahráme zvuk poškodenia
                 entity.battle.lives -= 1  # Znížime životy
                 # reset pozície hráča
-                entity.position.rect.x = 300
+                entity.position.rect.x = 100
                 entity.position.rect.y = 0
                 entity.speed = 0
                 entity.acceleration = 0.2

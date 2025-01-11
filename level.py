@@ -57,28 +57,50 @@ def loadLevel(levelNumber):
     if levelNumber == 1:
         globals.world = Level(
             platforms = [
-                pygame.Rect(100, 300, 400, 150),
-                pygame.Rect(100, 250, 50, 50),
-                pygame.Rect(450, 250, 50, 50),
-                pygame.Rect(600, 300, 400, 50),
-                pygame.Rect(1050, 360, 400, 50),
+                # Starting platform with granules
+                pygame.Rect(100, 250, 200, 50),
+
+                # Platform after a jump
+                pygame.Rect(400, 180, 200, 50),
+
+                # Platform with an enemy
+                pygame.Rect(800, 180, 200, 50),
+
+                # Platform after the bird obstacle
+                pygame.Rect(1200, 180, 200, 50),
+
+                # Platforms leading to the goal
+                pygame.Rect(1600, 130, 200, 50),
+                pygame.Rect(2000, 80, 200, 50),
+                pygame.Rect(2350, 30, 250, 50),
+                pygame.Rect(2300, 200, 150, 50),
+                pygame.Rect(2700, 250, 400, 50),
             ],
             winPlatforms= [
-                pygame.Rect(1050, 310, 50, 50)
+                pygame.Rect(3100, 200, 50, 50)  # Goal platform
             ],
             deathPlatforms = [
-                pygame.Rect(0, 800, 2000, 50)
-            ],
-            invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
-                pygame.Rect(50, -300, 50, 600),
+                pygame.Rect(0, 1000, 4000, 50)  # Death floor
             ],
             entities = [
-                utils.makeGranule(200,200),
-                utils.makeGranule(400,200),
-                utils.makeEnemy(150,275),
-                utils.makeEnemy(940,275),
-                utils.makeEnemy(605,275),
+                # Starting granules
+                utils.makeGranule(150, 200),
+                utils.makeGranule(200, 200),
+                utils.makeGranule(250, 200),
+
+                # Enemy on the second platform
+                utils.makeEnemy(850, 160),
+
+                # Bird obstacle
+                utils.makeEnemyPatrol(1400, 150, axis='y', distance=400, patrol_speed=4),
+                utils.makeEnemyPatrol(2600, 90, axis='x', distance=600, patrol_speed=6),
+
+                utils.makeGranule(2890,25),
+                # Player
                 globals.player1
+            ],
+            invisiblePlatforms = [  # Invisible walls for the level
+                pygame.Rect(50, -300, 50, 1200),
             ],
             backgrounds = [
 

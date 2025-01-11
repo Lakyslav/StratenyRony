@@ -27,7 +27,7 @@ class Scene:
 class MainMenuScene(Scene): 
     def __init__(self):
         # Tlačidlá pre navigáciu v menu
-        self.enter = ui.ButtonUI(pygame.K_RETURN, '[Výber úrovne]', 50, 200)
+        self.enter = ui.ButtonUI(pygame.K_RETURN, '[Pokračovať]', 50, 200)
         self.new_game = ui.ButtonUI(pygame.K_n, '[Nová hra]', 50, 250)  # New button
         self.settings = ui.ButtonUI(pygame.K_s, '[Nastavenia]', 50, 300)
         self.tutorial_button = ui.ButtonUI(pygame.K_t, '[Návod]', 50, 350)  # Tlačidlo pre návod
@@ -53,6 +53,7 @@ class MainMenuScene(Scene):
             globals.player1.battle.lives = 3
             globals.player1.score.score = 0
             globals.saveProgress()
+            self.enter.on = True
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on:
             globals.loadProgress()
             sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Prechod na výber úrovne
@@ -65,6 +66,7 @@ class MainMenuScene(Scene):
     def update(self, sm, inputStream):
         # Aktualizácia stavu tlačidiel
         self.enter.update(inputStream)
+        self.new_game.update(inputStream)
         self.settings.update(inputStream)
         self.tutorial_button.update(inputStream)  # Aktualizácia tlačidla pre návod
         self.esc.update(inputStream)
@@ -76,6 +78,7 @@ class MainMenuScene(Scene):
 
         # Vykreslenie tlačidiel v menu
         self.enter.draw(screen)
+        self.new_game.draw(screen)
         self.settings.draw(screen)
         self.tutorial_button.draw(screen)  # Vykreslenie tlačidla pre návod
         self.esc.draw(screen)
@@ -260,6 +263,9 @@ class LevelSelectScene(Scene):
     def onEnter(self):
         # Prehrávanie hudby pre menu
         globals.soundManager.playMusicFade('menu')
+    
+    def onExit(self):
+        globals.saveProgress()
 
     def update(self, sm, inputStream):
         # Aktualizácia stavu tlačidiel
@@ -332,8 +338,8 @@ class GameScene(Scene):
         # Skontrolovanie výhry alebo prehry
         if globals.world.isWon():
             # Aktualizácia mapy úrovní s prístupnými úrovňami
-            nextLevel = min(globals.curentLevel + 1, globals.maxLevel)
-            levelToUnlock = max(nextLevel, globals.lastCompletedLevel)
+            nextLevel = globals.curentLevel + 1
+            levelToUnlock = nextLevel
             globals.lastCompletedLevel = levelToUnlock
             globals.curentLevel = nextLevel
             sm.push(WinScene())
@@ -442,14 +448,12 @@ class LoseScene(Scene):
                 sm.set([FadeTransitionScene([self], [LevelSelectScene()])])  # Prechod na výber úrovní
 
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
-            print("ESC stlačený")
-            if sm:
-                print("Sm existuje, prechádzam na výber úrovní")
             sm.set([FadeTransitionScene([self], [LevelSelectScene()])])
 
 
         # Skontrolovanie stlačenia tlačidla R pre reštart
         if self.restart_button.on or inputStream.keyboard.isKeyPressed(pygame.K_r):
+            globals.loadProgress()
             level.loadLevel(globals.curentLevel)  # Načítanie aktualnej úrovne
             sm.set([FadeTransitionScene([self], [LevelSelectScene(),GameScene()])])  # Prechod na aktualnu úroveň
 
