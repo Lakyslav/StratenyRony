@@ -57,7 +57,7 @@ def loadLevel(levelNumber):
     if levelNumber == 1:
         globals.world = Level(
             platforms = [
-                pygame.Rect(100, 300, 400, 50),
+                pygame.Rect(100, 300, 400, 150),
                 pygame.Rect(100, 250, 50, 50),
                 pygame.Rect(450, 250, 50, 50),
                 pygame.Rect(600, 300, 400, 50),
@@ -67,14 +67,14 @@ def loadLevel(levelNumber):
                 pygame.Rect(1050, 310, 50, 50)
             ],
             deathPlatforms = [
-                pygame.Rect(0, 400, 2000, 50)
+                pygame.Rect(0, 800, 2000, 50)
             ],
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
                 pygame.Rect(50, -300, 50, 600),
             ],
             entities = [
-                utils.makeGranule(100,200),
-                utils.makeGranule(200,250),
+                utils.makeGranule(200,200),
+                utils.makeGranule(400,200),
                 utils.makeEnemy(150,275),
                 utils.makeEnemy(940,275),
                 utils.makeEnemy(605,275),
@@ -99,30 +99,54 @@ def loadLevel(levelNumber):
         )
     elif levelNumber == 2:
         globals.world = Level(
-            platforms = [
-                pygame.Rect(100, 300, 375, 50),
-                pygame.Rect(600, 300, 400, 50),
-                pygame.Rect(1100, 250, 50, 50),
-                pygame.Rect(1250, 250, 50, 50),
-                pygame.Rect(1400, 400, 100, 50)
+        platforms = [
+                pygame.Rect(100, 300, 375, 150),  #1
+                pygame.Rect(600, 300, 400, 150),  #2
+                pygame.Rect(1100, 250, 50, 50),   #3
+                pygame.Rect(1175, 400, 50, 150),  #4 
+                pygame.Rect(1250, 250, 50, 50),   #5
+                pygame.Rect(1380, 400, 100, 150), #6
+                pygame.Rect(1575, 350, 200, 150), #7
+                pygame.Rect(1850, 300, 100, 150), #8
+                pygame.Rect(2130, 250, 100, 250), #9
+                pygame.Rect(2275, 200, 150, 250), #10
+                pygame.Rect(2525, 250, 100, 250), #11
+                pygame.Rect(2625, 300, 150, 200), #12
+
+                # Jaskyňa s 75px vertikálnym priestorom medzi platformami
+                pygame.Rect(2975, 350, 300, 200),  #13
+                    pygame.Rect(2975, -125, 1200, 400),
+                pygame.Rect(3125, 400, 300, 200),  #13
+
+                pygame.Rect(3425, 500, 100, 200),  #13
+                pygame.Rect(3525, 625, 500, 200),  #13
+                        pygame.Rect(3675, 500, 100, 50),  #13
+                pygame.Rect(4025, -125, 600, 950),
+
+
             ],
             winPlatforms= [
-                pygame.Rect(1450, 350, 50, 50)
+                pygame.Rect(3900, 575, 50, 50)
             ],
             deathPlatforms = [
-                pygame.Rect(0, 400, 2000, 50)
+                pygame.Rect(0, 800, 4000, 50)
             ],
             entities = [
-                utils.makeGranule(100,200),
-                #Pohybujúci nepriateľ pozdĺž osi Y
-                utils.makeEnemyPatrol(500, 350, axis='y', distance=200,patrol_speed= 4), 
+                utils.makeGranule(200, 200),
+                utils.makeGranule(1175, 350),
+                utils.makeGranule(1800, 250),
+                utils.makeGranule(2400, 150),
+                utils.makeGranule(2900, 300),
+                utils.makeGranule(3675, 460),
+                # Pohybujúci nepriateľ pozdĺž osi Y
+                utils.makeEnemyPatrol(500, 350, axis='y', distance=300, patrol_speed=4),
+                utils.makeEnemy(750,275),
                 globals.player1
             ],
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
                 pygame.Rect(50, -300, 50, 600)
             ],
-                        backgrounds = [
-
+            backgrounds = [
                 (pygame.image.load(r'images/pozadia/level2_1.png').convert_alpha(), 0.2),
                 (pygame.image.load(r'images/pozadia/level2_2.png').convert_alpha(), 0.5),
                 (pygame.image.load(r'images/pozadia/level2_3.png').convert_alpha(), 0.7),
@@ -141,34 +165,34 @@ def loadLevel(levelNumber):
                 pygame.Rect(400, 200, 50, 100),
                 pygame.Rect(600, 150, 400, 50),
                 pygame.Rect(1050, 275, 200, 50),
-                pygame.Rect(1300, 225, 100, 50),
-                pygame.Rect(1450, 175, 100, 50),
-                pygame.Rect(1750, 125, 200, 50),
-                pygame.Rect(2000, 75, 150, 50),
-                pygame.Rect(2200, 200, 250, 50),
-                pygame.Rect(2500, 270, 300, 50),
-                pygame.Rect(2800, 200, 200, 50),
-                pygame.Rect(3000, 150, 200, 50),
-                pygame.Rect(3200, 100, 150, 50),
-                pygame.Rect(3400, 50, 250, 50),
+                pygame.Rect(1325, 225, 100, 50),
+                pygame.Rect(1475, 175, 100, 50),
+                pygame.Rect(1775, 125, 200, 50),
+                pygame.Rect(2025, 75, 150, 50),
+                pygame.Rect(2225, 200, 250, 50),
+                pygame.Rect(2525, 270, 300, 50),
+                pygame.Rect(2825, 200, 200, 50),
+                pygame.Rect(3025, 150, 200, 50),
+                pygame.Rect(3225, 100, 150, 50),
+                pygame.Rect(3425, 50, 250, 50),
             ],
             winPlatforms= [
-                pygame.Rect(3500, 0, 50, 50)
+                pygame.Rect(3525, 0, 50, 50)
             ],
             deathPlatforms = [
-                pygame.Rect(0, 400, 2000, 50)
+                pygame.Rect(0, 800, 2000, 50)
             ],
             entities = [
-                utils.makeGranule(100, 200),
+                utils.makeGranule(200, 200),
                 utils.makeEnemyPatrol(450, 200, axis='x', distance=200),
                 utils.makeEnemyPatrol(750, 50, axis='y', distance=300, patrol_speed=3),
-                utils.makeEnemyPatrol(1625, 200, axis='y', distance=350, patrol_speed=4),
-                utils.makeEnemyPatrol(1750, 200, axis='x', distance=250, patrol_speed=3),
-                utils.makeEnemy(1850, 100),
-                utils.makeEnemy(2545, 250),
-                utils.makeEnemy(2850, 175),
-                utils.makeEnemy(3050, 125),
-                utils.makeEnemy(3250, 75),
+                utils.makeEnemyPatrol(1650, 200, axis='y', distance=350, patrol_speed=4),
+                utils.makeEnemyPatrol(1775, 200, axis='x', distance=250, patrol_speed=3),
+                utils.makeEnemy(1875, 100),
+                utils.makeEnemy(2570, 250),
+                utils.makeEnemy(2875, 175),
+                utils.makeEnemy(3075, 125),
+                utils.makeEnemy(3275, 75),
                 globals.player1
             ],
             invisiblePlatforms = [

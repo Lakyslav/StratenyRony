@@ -124,10 +124,8 @@ walk2 = pygame.image.load('images\dachshund_3.png')
 
 fall1 = pygame.image.load('images\dachshund_3.png')
 
-# Funkcia na resetovanie hráča (obnoví skóre, životy a pozíciu)
+# Funkcia na resetovanie hráča (obnoví pozíciu)
 def resetPlayer(entity):
-    entity.score.score = 0  # Vynuluje skóre na 0
-    entity.battle.lives = 3  # Vynuluje životy na 3
     entity.position.rect.x = 100  # Resetuje pozíciu
     entity.position.rect.y = 0
     entity.speed = 0  # Vynuluje rýchlosť

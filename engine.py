@@ -153,6 +153,8 @@ class InputSystem(System):
             entity.intention.zoomIn = True
         else:
             entity.intention.zoomIn = False 
+        if inputStream.keyboard.isKeyPressed(pygame.K_c):
+            print(f"Entity Coordinates: X={entity.position.rect.x}, Y={entity.position.rect.y+72}")
 
 class CollectionSystem(System):
     def check(self, entity):
@@ -166,6 +168,12 @@ class CollectionSystem(System):
                     globals.soundManager.playSound('granule')
                     globals.world.entities.remove(otherEntity)
                     entity.score.score += 1
+
+                                        # Check if player has collected 3 granules
+                    if entity.score.score % 3 == 0:
+                        # Gain a heart
+                        entity.battle.lives += 1
+                        entity.score.score = 0
 
 class BattleSystem(System):
     def check(self, entity):
@@ -218,19 +226,28 @@ class CameraSystem(System):
         offsetX = cameraRect.x + cameraRect.w / 2 - (entity.camera.worldX * entity.camera.zoomLevel)
         offsetY = cameraRect.y + cameraRect.h / 2 - (entity.camera.worldY * entity.camera.zoomLevel)
 
-        # Draw parallax backgrounds
         if globals.world.backgrounds:
             for bg_image, speed in globals.world.backgrounds:
-                bg_width = bg_image.get_width()
-                bg_height = bg_image.get_height()
-                
                 # Scale the background to the screen size
                 scaled_bg = pygame.transform.scale(bg_image, globals.SCREEN_SIZE)
+                
+                # Get the width and height of the scaled background
+                bg_width, bg_height = scaled_bg.get_size()
 
                 # Draw the scaled background repeatedly to create the parallax effect
-                for x in range((cameraRect.width // bg_width) + 2):
-                    draw_x = (x * globals.SCREEN_SIZE[0]) - (entity.camera.worldX * speed)
+                for x in range(-1, (cameraRect.width // bg_width) + 2):
+                    # Adjust the x position based on the camera's position and speed
+                    draw_x = (x * bg_width) - (entity.camera.worldX * speed)
+                    
+                    # Draw the background at the calculated position
                     screen.blit(scaled_bg, (draw_x, 0))
+                    
+                    # Handle wrapping when the background moves off-screen
+                    if draw_x < -bg_width:
+                        screen.blit(scaled_bg, (draw_x + bg_width * 2, 0))
+                    elif draw_x > globals.SCREEN_SIZE[0]:
+                        screen.blit(scaled_bg, (draw_x - bg_width * 2, 0))
+
 
         # Aktualizácia pozície kamery, ak sleduje nejakú entitu
         if entity.camera.entityToTrack is not None:
@@ -241,7 +258,11 @@ class CameraSystem(System):
             
             # Výpočet cieľovej pozície pre kameru (sledovaná entita)
             targetX = trackedEntity.position.rect.x + trackedEntity.position.rect.w / 2
-            targetY = trackedEntity.position.rect.y + trackedEntity.position.rect.h / 2
+            targetY = (
+                trackedEntity.position.rect.y + trackedEntity.position.rect.h / 2
+                - globals.SCREEN_SIZE[1] / 5  # Shift up by a quarter of the screen height
+            )
+
 
             # Interpolácia pre hladkú zmenu pozície kamery
             entity.camera.worldX = (currentX * 0.95) + (targetX * 0.05)

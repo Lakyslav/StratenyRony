@@ -1,15 +1,42 @@
 import soundmanager  # Importovanie modulu na správu zvukov
+import configparser
+
+# Save progress to savegame.ini
+def saveProgress():
+    config = configparser.ConfigParser()
+    config['Progress'] = {
+        'maxLevel': maxLevel,
+        'lastCompletedLevel': lastCompletedLevel,
+        'curentLevel': curentLevel,
+        'playerLives': player1.battle.lives if player1 and player1.battle else 3,
+        'playerScore': player1.score.score if player1 and player1.score else 0
+    }
+    with open('savegame.ini', 'w') as configfile:
+        config.write(configfile)
+
+# Load progress from savegame.ini
+def loadProgress():
+    global maxLevel, lastCompletedLevel, curentLevel, player1
+    config = configparser.ConfigParser()
+    if config.read('savegame.ini') and 'Progress' in config:
+        maxLevel = int(config['Progress'].get('maxLevel', maxLevel))
+        lastCompletedLevel = int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel))
+        curentLevel = int(config['Progress'].get('curentLevel', curentLevel))
+        if player1:
+            if player1.battle:
+                player1.battle.lives = int(config['Progress'].get('playerLives', player1.battle.lives))
+            if player1.score:
+                player1.score.score = int(config['Progress'].get('playerScore', player1.score.score))
 
 
 # Premenná pre aktuálnu úroveň
 world = None  # Aktuálny svet (úroveň)
 
-maxLevel = 3  # Maximálny počet úrovní
-lastCompletedLevel = 3  # Posledná dokončená úroveň
-curentLevel = 3  # Aktuálna úroveň (počiatočná)
+maxLevel = None  # Will be set by loadProgress
+lastCompletedLevel = None  # Will be set by loadProgress
+curentLevel = None  # Will be set by loadProgress
 
 # Rozmery obrazovky
-#1024×576
 SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)
 
 # Definovanie farieb pomocou RGB hodnôt
@@ -20,7 +47,7 @@ GREEN = (0, 255, 0)  # Zelená farba
 RED = (255, 0, 0)  # Červená farba
 MUSTARD = (209, 206, 25)  # Horčicová farba
 
-player1 = None  # Využíva sa v platformer.py
+player1 = None  # Hráč, inicializovaný neskôr v platformer.py
 
 # Vytvorenie inštancie správy zvukov
-soundManager = soundmanager.SoundManager()  
+soundManager = soundmanager.SoundManager()

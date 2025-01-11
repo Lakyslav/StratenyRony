@@ -24,13 +24,14 @@ class Scene:
         pass  # Vykreslenie scény na obrazovku
 
 # Hlavná ponuka scény
-class MainMenuScene(Scene):
+class MainMenuScene(Scene): 
     def __init__(self):
         # Tlačidlá pre navigáciu v menu
         self.enter = ui.ButtonUI(pygame.K_RETURN, '[Výber úrovne]', 50, 200)
-        self.settings = ui.ButtonUI(pygame.K_s, '[Nastavenia]', 50, 250)
-        self.tutorial_button = ui.ButtonUI(pygame.K_t, '[Návod]', 50, 300)  # Tlačidlo pre návod
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Ukončiť hru]', 50, 350)
+        self.new_game = ui.ButtonUI(pygame.K_n, '[Nová hra]', 50, 250)  # New button
+        self.settings = ui.ButtonUI(pygame.K_s, '[Nastavenia]', 50, 300)
+        self.tutorial_button = ui.ButtonUI(pygame.K_t, '[Návod]', 50, 350)  # Tlačidlo pre návod
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Ukončiť hru]', 50, 400)
 
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
@@ -44,7 +45,16 @@ class MainMenuScene(Scene):
         
     def input(self, sm, inputStream):
         # Klávesové vstupy pre rôzne akcie
+        if self.new_game.on or inputStream.keyboard.isKeyPressed(pygame.K_n):
+            # Reset progress
+            globals.maxLevel = 3
+            globals.lastCompletedLevel = 1
+            globals.curentLevel = 1
+            globals.player1.battle.lives = 3
+            globals.player1.score.score = 0
+            globals.saveProgress()
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on:
+            globals.loadProgress()
             sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Prechod na výber úrovne
         if inputStream.keyboard.isKeyPressed(pygame.K_s) or self.settings.on:
             sm.push(FadeTransitionScene([self], [SettingsScene()]))  # Prechod na nastavenia
@@ -311,6 +321,7 @@ class GameScene(Scene):
 
     def onEnter(self):
         # Prehrávanie hudby pre úroveň
+        globals.loadProgress()
         globals.soundManager.playMusicFade('level')
         
     def input(self, sm, inputStream):
@@ -381,6 +392,8 @@ class WinScene(Scene):
 
         # Skontrolovanie stlačenia Enter tlačidla pre pokračovanie
         if self.enter.on or inputStream.keyboard.isKeyPressed(pygame.K_RETURN):
+            globals.saveProgress()  # Save progress here
+            globals.loadProgress()
             level.loadLevel(globals.curentLevel)  # Načítanie nasledujúcej úrovne
             sm.set([FadeTransitionScene([self], [LevelSelectScene(),GameScene()])])  # Prechod na nasledujúcu úroveň
 
