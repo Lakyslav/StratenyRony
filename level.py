@@ -174,7 +174,7 @@ def loadLevel(levelNumber):
                 (pygame.image.load(r'images/pozadia/level2_3.png').convert_alpha(), 0.7),
                 (pygame.image.load(r'images/pozadia/level2_4.png').convert_alpha(), 1),
             ],
-            platform_image = pygame.image.load('images\platformy\platforma_001.png'),
+            platform_image = pygame.image.load('images\platformy\platforma_003.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
@@ -228,12 +228,12 @@ def loadLevel(levelNumber):
                 (pygame.image.load(r'images/pozadia/level3_5.png').convert_alpha(), 0.8),
                 (pygame.image.load(r'images/pozadia/level3_6.png').convert_alpha(), 1),
             ],
-            platform_image = pygame.image.load('images\platformy\platforma_002.png'),
+            platform_image = pygame.image.load('images\platformy\platforma_012.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
-
+    
 
 
 
