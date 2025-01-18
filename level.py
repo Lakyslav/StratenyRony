@@ -84,7 +84,7 @@ def loadLevel(levelNumber):
             ],
             entities = [
                 # Starting granules
-                utils.makeGranule(150, 200),
+                utils.makeGranule(200, 180),
                 utils.makeGranule(200, 200),
                 utils.makeGranule(250, 200),
 

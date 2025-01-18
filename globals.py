@@ -1,6 +1,7 @@
 import soundmanager  # Importovanie modulu na správu zvukov
 import configparser
 
+
 # Ulož potup do savegame.ini
 def saveProgress():
     config = configparser.ConfigParser()
@@ -11,22 +12,27 @@ def saveProgress():
         'playerLives': player1.battle.lives if player1 and player1.battle else 3,
         'playerScore': player1.score.score if player1 and player1.score else 0
     }
+    config['Timers'] = {f'level{i}': f"{timer:.2f}" for i, timer in levelTimers.items()}
     with open('savegame.ini', 'w') as configfile:
         config.write(configfile)
 
 # Načítaj postup zo savegame.ini
 def loadProgress():
-    global maxLevel, lastCompletedLevel, curentLevel, player1
+    global maxLevel, lastCompletedLevel, curentLevel, player1, levelTimers
     config = configparser.ConfigParser()
-    if config.read('savegame.ini') and 'Progress' in config:
-        maxLevel = int(config['Progress'].get('maxLevel', maxLevel))
-        lastCompletedLevel = int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel))
-        curentLevel = int(config['Progress'].get('curentLevel', curentLevel))
-        if player1:
-            if player1.battle:
-                player1.battle.lives = int(config['Progress'].get('playerLives', player1.battle.lives))
-            if player1.score:
-                player1.score.score = int(config['Progress'].get('playerScore', player1.score.score))
+    if config.read('savegame.ini'):
+        if 'Progress' in config:
+            maxLevel = int(config['Progress'].get('maxLevel', maxLevel))
+            lastCompletedLevel = int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel))
+            curentLevel = int(config['Progress'].get('curentLevel', curentLevel))
+            if player1:
+                if player1.battle:
+                    player1.battle.lives = int(config['Progress'].get('playerLives', player1.battle.lives))
+                if player1.score:
+                    player1.score.score = int(config['Progress'].get('playerScore', player1.score.score))
+        if 'Timers' in config:
+            for i in range(1, maxLevel + 1):
+                levelTimers[i] = float(config['Timers'].get(f'level{i}', 0.0))
 
 
 # Premenná pre aktuálnu úroveň
@@ -36,6 +42,8 @@ world = None  # Aktuálny svet (úroveň)
 maxLevel = None  
 lastCompletedLevel = None 
 curentLevel = None  
+
+levelTimers = {i: 0.0 for i in range(1, 4)}
 
 # Rozmery obrazovky
 SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)

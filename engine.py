@@ -313,7 +313,7 @@ class CameraSystem(System):
         # Vykreslenie HUD pre entitu (skóre a životy)
         if entity.score is not None:
             screen.blit(utils.granule0, (entity.camera.rect.x + 10, entity.camera.rect.y + 10))
-            utils.drawText(screen, str(entity.score.score), entity.camera.rect.x + 50, entity.camera.rect.y + 10, globals.WHITE, 255)
+            utils.drawText(screen, str(entity.score.score), entity.camera.rect.x + 50, entity.camera.rect.y + 10, globals.WHITE, 255, utils.PixelOperator8)
 
         # Vykreslenie životov pre entitu
         if entity.battle is not None:

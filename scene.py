@@ -74,7 +74,7 @@ class MainMenuScene(Scene):
     def draw(self, sm, screen):
         screen.blit(self.background, (0, 0))
         # Nastavenie pozadia a vykreslenie názvu menu
-        utils.drawText(screen, 'STRATENÝ RONY', 50, 50, globals.DARK_GREY, 255)
+        utils.drawText(screen, 'Stratený Rony', 50, 50, globals.DARK_GREY, 255,utils.PixelOperator8)
 
         # Vykreslenie tlačidiel v menu
         self.enter.draw(screen)
@@ -320,16 +320,23 @@ class GameScene(Scene):
         self.inputSystem = engine.InputSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.animationSystem = engine.AnimationSystem()
+
+        #Časovač 
+        self.display_timer = 0  # Separate display timer
+        self.start_time = 0  # Time when the level starts
         # Tlačidlá pre ovládanie pohybu (W, A, D)
         self.button_a = ui.ButtonUI(pygame.K_a, '[A]', 10, globals.SCREEN_SIZE[1] - 100)
         self.button_w = ui.ButtonUI(pygame.K_w, '[W]', 45, globals.SCREEN_SIZE[1] - 120)
         self.button_d = ui.ButtonUI(pygame.K_d, '[D]', 85, globals.SCREEN_SIZE[1] - 100)
 
     def onEnter(self):
+        # Resetuj časovač
+        self.display_timer = 0
+        self.start_time = pygame.time.get_ticks()
         # Prehrávanie hudby pre úroveň
         globals.loadProgress()
         globals.soundManager.playMusicFade('level')
-        
+
     def input(self, sm, inputStream):
         # Skontrolovanie vstupu ESC pre návrat
         if inputStream.keyboard.isKeyReleased(pygame.K_ESCAPE):
@@ -339,9 +346,11 @@ class GameScene(Scene):
         if globals.world.isWon():
             # Aktualizácia mapy úrovní s prístupnými úrovňami
             nextLevel = globals.curentLevel + 1
+            globals.levelTimers[globals.curentLevel] = self.display_timer
             levelToUnlock = nextLevel
             globals.lastCompletedLevel = levelToUnlock
             globals.curentLevel = nextLevel
+
             sm.push(WinScene())
         if globals.world.isLost():
             sm.push(LoseScene())
@@ -358,6 +367,9 @@ class GameScene(Scene):
         self.button_a.update(inputStream)
         self.button_d.update(inputStream)
 
+        self.display_timer = (pygame.time.get_ticks() - self.start_time) / 1000
+
+
     def draw(self, sm, screen):
         # Nastavenie pozadia
 
@@ -370,13 +382,17 @@ class GameScene(Scene):
         self.button_a.draw(screen)
         self.button_d.draw(screen)
 
+        minutes = int(self.display_timer // 60)
+        seconds = int(self.display_timer % 60)
+        milliseconds = int((self.display_timer * 100) % 100)
+        time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
+        utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255,utils.PixelOperator8)
 
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0
         self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Návrat na výber úrovní]', 50, 200)
         self.enter = ui.ButtonUI(pygame.K_RETURN, '[Pokračuj daľej]', 50, 250)  # Tlačidlo pre pokračovanie
-
     def onEnter(self):
         # Prehrávanie hudby pri výhre
         globals.soundManager.playMusicFade('won')
@@ -400,8 +416,8 @@ class WinScene(Scene):
         if self.enter.on or inputStream.keyboard.isKeyPressed(pygame.K_RETURN):
             globals.saveProgress()  # Save progress here
             globals.loadProgress()
-            level.loadLevel(globals.curentLevel)  # Načítanie nasledujúcej úrovne
-            sm.set([FadeTransitionScene([self], [LevelSelectScene(),GameScene()])])  # Prechod na nasledujúcu úroveň
+            level.loadLevel(globals.curentLevel)  # Load the next level
+            sm.set([FadeTransitionScene([self], [LevelSelectScene(),GameScene()])]) # Prechod na nasledujúcu úroveň
 
     def draw(self, sm, screen):
         if len(sm.scenes) > 1:

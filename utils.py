@@ -5,6 +5,7 @@ import globals
 # Inicializácia písma pre text
 pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 24)
+PixelOperator8 = pygame.font.Font('font\PixelOperator8.ttf', 24)
 
 # Funkcia na vykreslenie obrázka s priehľadnosťou
 # Inšpirované zdrojom: https://nerdparadise.com/programming/pygameblitopacity
@@ -22,10 +23,11 @@ def blit_alpha(target, source, location, opacity):
 
 
 # Funkcia na vykreslenie textu
-def drawText(screen, t, x, y, fg, alpha):
+def drawText(screen, t, x, y, fg, alpha,Usedfont = font):
     # Vytvorenie textu pomocou vlastného fontu, s vybranou farbou (fg)
-    text = font.render(t, True, fg)
+    text = Usedfont.render(t, True, fg)
     
+
     # Získanie obdlžníka textu (na určenie pozície a rozmerov)
     text_rect = text.get_rect()
     
