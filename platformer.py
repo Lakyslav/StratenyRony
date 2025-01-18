@@ -46,15 +46,14 @@ while running:
     if sceneManager.isEmpty():  # Ak je zoznam scén prázdny, končíme hru
         running = False
     
-    # Spracovanie vstupu, aktualizácia a kreslenie scén
-    sceneManager.input(inputStream)
-    sceneManager.update(inputStream)
-    sceneManager.draw(screen)
+    
+    sceneManager.input(inputStream) # Spracovanie vstupu
+    sceneManager.update(inputStream) # aktualizácia
+    sceneManager.draw(screen) # kreslenie scén
 
     clock.tick(60)  # Udržiavanie 60 FPS
 
-# Ukončenie pygame po ukončení hry
-pygame.quit()
+pygame.quit() # Ukončenie pygame po ukončení hry
 
 
 

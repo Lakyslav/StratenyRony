@@ -1,7 +1,7 @@
 import soundmanager  # Importovanie modulu na správu zvukov
 import configparser
 
-# Save progress to savegame.ini
+# Ulož potup do savegame.ini
 def saveProgress():
     config = configparser.ConfigParser()
     config['Progress'] = {
@@ -14,7 +14,7 @@ def saveProgress():
     with open('savegame.ini', 'w') as configfile:
         config.write(configfile)
 
-# Load progress from savegame.ini
+# Načítaj postup zo savegame.ini
 def loadProgress():
     global maxLevel, lastCompletedLevel, curentLevel, player1
     config = configparser.ConfigParser()
@@ -32,9 +32,10 @@ def loadProgress():
 # Premenná pre aktuálnu úroveň
 world = None  # Aktuálny svet (úroveň)
 
-maxLevel = None  # Will be set by loadProgress
-lastCompletedLevel = None  # Will be set by loadProgress
-curentLevel = None  # Will be set by loadProgress
+# Budú nastavené pomocou loadProgress
+maxLevel = None  
+lastCompletedLevel = None 
+curentLevel = None  
 
 # Rozmery obrazovky
 SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)

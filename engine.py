@@ -157,21 +157,23 @@ class InputSystem(System):
             print(f"Entity Coordinates: X={entity.position.rect.x}, Y={entity.position.rect.y+72}")
 
 class CollectionSystem(System):
-    def check(self, entity):
+    def check(self, entity):     # Kontrola, či entita je hráč a má atribút score
         return entity.type == 'player' and entity.score is not None
     
     # Aktualizácia zbierania predmetov
     def updateEntity(self, screen, inputStream, entity):
         for otherEntity in globals.world.entities:
+            # Kontrola, či iná entita nie je hráč a či je zbierateľná
             if otherEntity is not entity and otherEntity.type == 'collectable':
+                #Pokiaľ má kolíziu s iným telesom
                 if entity.position.rect.colliderect(otherEntity.position.rect):
-                    globals.soundManager.playSound('granule')
-                    globals.world.entities.remove(otherEntity)
-                    entity.score.score += 1
+                    globals.soundManager.playSound('granule') #Prehraj zvuk
+                    globals.world.entities.remove(otherEntity) #Vymaž z mapy
+                    entity.score.score += 1 # Zvých počet granúľ
 
-                                        # Check if player has collected 3 granules
+                    # Kontrola či máme 3 granule
                     if entity.score.score % 3 == 0:
-                        # Gain a heart
+                        # Priadaj život
                         entity.battle.lives += 1
                         entity.score.score = 0
 
@@ -226,27 +228,25 @@ class CameraSystem(System):
         offsetX = cameraRect.x + cameraRect.w / 2 - (entity.camera.worldX * entity.camera.zoomLevel)
         offsetY = cameraRect.y + cameraRect.h / 2 - (entity.camera.worldY * entity.camera.zoomLevel)
 
+        # Parallax pozadia
         if globals.world.backgrounds:
             for bg_image, speed in globals.world.backgrounds:
-                # Scale the background to the screen size
+                # Zmena veľkosti pozadia na veľkosť obrazovky
                 scaled_bg = pygame.transform.scale(bg_image, globals.SCREEN_SIZE)
-                
-                # Get the width and height of the scaled background
+                # Získanie šírky a výšky upraveného pozadia
                 bg_width, bg_height = scaled_bg.get_size()
-
-                # Draw the scaled background repeatedly to create the parallax effect
+                # Opakované kreslenie pozadia na vytvorenie efektu parallax
                 for x in range(-1, (cameraRect.width // bg_width) + 2):
-                    # Adjust the x position based on the camera's position and speed
+                    # Nastavenie pozície na osi x na základe polohy kamery a rýchlosti
                     draw_x = (x * bg_width) - (entity.camera.worldX * speed)
-                    
-                    # Draw the background at the calculated position
+                    # Kreslenie pozadia na vypočítanej pozícii
                     screen.blit(scaled_bg, (draw_x, 0))
-                    
-                    # Handle wrapping when the background moves off-screen
+                    # Ošetrovanie posunutia, keď sa pozadie posunie mimo obrazovky
                     if draw_x < -bg_width:
                         screen.blit(scaled_bg, (draw_x + bg_width * 2, 0))
                     elif draw_x > globals.SCREEN_SIZE[0]:
                         screen.blit(scaled_bg, (draw_x - bg_width * 2, 0))
+
 
 
         # Aktualizácia pozície kamery, ak sleduje nejakú entitu
@@ -357,30 +357,33 @@ class Animations():
 # Trieda pre jednotlivé animácie
 class Animation():
     def __init__(self, imageList):
+        # Ak je zadaný jeden obrázok (pygame.Surface), obalí ho do zoznamu
         if isinstance(imageList, pygame.Surface):
-            self.imageList = [imageList]  # Ak je jeden obrázok, obalí ho do zoznamu
+            self.imageList = [imageList]
         else:
-            self.imageList = imageList
+            self.imageList = imageList  # Inak použije zoznam obrázkov
         self.imageIndex = 0  # Index aktuálneho obrázka
         self.animationTimer = 0  # Časovač na zmenu obrázka
-        self.animationSpeed = 12  # Rýchlosť animácie
+        self.animationSpeed = 12  # Rýchlosť prechodu medzi obrázkami
 
-    # Aktualizácia animácie (prejde na ďalší obrázok)
+    # Aktualizácia animácie (prejde na ďalší obrázok, ak je čas)
     def update(self):
         self.animationTimer += 1
-        if self.animationTimer >= self.animationSpeed:
-            self.animationTimer = 0
-            self.imageIndex += 1
-            if self.imageIndex > len(self.imageList) - 1:
+        if self.animationTimer >= self.animationSpeed:  # Ak uplynul čas
+            self.animationTimer = 0  # Resetuje časovač
+            self.imageIndex += 1  # Prejde na ďalší obrázok
+            if self.imageIndex > len(self.imageList) - 1:  # Ak sme na konci animácie, vráti sa na začiatok
                 self.imageIndex = 0
 
     # Vykreslenie animácie na obrazovku
     def draw(self, screen, x, y, flipX, flipY, zoomLevel, alpha):
-        image = self.imageList[self.imageIndex]
-        #image.set_alpha(alpha)
+        image = self.imageList[self.imageIndex]  # Vyberie aktuálny obrázok animácie
+        # Vypočíta nové rozmery obrázka podľa úrovne zväčšenia
         newWidth = int(image.get_rect().w * zoomLevel)
         newHeight = int(image.get_rect().h * zoomLevel)
+        # Vykreslí obrázok s možným otočením a zväčšením
         screen.blit(pygame.transform.scale(pygame.transform.flip(image, flipX, flipY), (newWidth, newHeight)), (x, y))
+
 
 # Trieda pre skóre entity
 class Score():

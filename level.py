@@ -103,7 +103,7 @@ def loadLevel(levelNumber):
                 pygame.Rect(50, -300, 50, 1200),
             ],
             backgrounds = [
-
+                # zdroj obrázka a rýchlosť pohybu (čím menšie číslo tým rýchlejšie)
                 (pygame.image.load(r'images/pozadia/level1_1.png').convert_alpha(), 0.2),
                 (pygame.image.load(r'images/pozadia/level1_2.png').convert_alpha(), 0.3),
                 (pygame.image.load(r'images/pozadia/level1_10.png').convert_alpha(), 0.8),
