@@ -3,6 +3,7 @@ import utils
 import level
 import scene
 import globals
+import ui
 
 # Trieda systému (základná trieda pre rôzne systémy)
 class System():
@@ -213,13 +214,6 @@ class CameraSystem(System):
     # Aktualizácia entity, ktorá má kameru
     def updateEntity(self, screen, inputStream, entity):
 
-        # Priblíženie a oddialenie kamery
-        if entity.intention is not None:
-            if entity.intention.zoomIn:
-                entity.camera.zoomLevel += 0.01
-            if entity.intention.zoomOut:
-                entity.camera.zoomLevel -= 0.01
-
         # Nastavenie orezávacieho obdlžníka (klipovacieho)
         cameraRect = entity.camera.rect
         clipRect = pygame.Rect(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height)
@@ -310,15 +304,23 @@ class CameraSystem(System):
                 (e.position.rect.y * entity.camera.zoomLevel) + offsetY,
                 e.direction == 'left', False, entity.camera.zoomLevel, 255)
 
+
+        self.granule_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 0, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
+        self.zivot_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 50, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
+        self.granule_button.draw(screen)
+        self.zivot_button.draw(screen)
+
+
         # Vykreslenie HUD pre entitu (skóre a životy)
         if entity.score is not None:
-            screen.blit(utils.granule0, (entity.camera.rect.x + 10, entity.camera.rect.y + 10))
-            utils.drawText(screen, str(entity.score.score), entity.camera.rect.x + 50, entity.camera.rect.y + 10, globals.WHITE, 255, utils.PixelOperator8)
+            screen.blit(utils.granule0, (entity.camera.rect.x + 10, entity.camera.rect.y + 20))
+            utils.drawText(screen, str(entity.score.score), entity.camera.rect.x + 50, entity.camera.rect.y + 20, globals.WHITE, 255, utils.PixelOperator8)
 
         # Vykreslenie životov pre entitu
         if entity.battle is not None:
-            for l in range(entity.battle.lives):
-                screen.blit(utils.zivot_image, (entity.camera.rect.x + 200 + (l * 60), entity.camera.rect.y + 10))
+            screen.blit(utils.zivot_image, (entity.camera.rect.x + 10, entity.camera.rect.y + 65))
+            utils.drawText(screen, str(entity.battle.lives), entity.camera.rect.x + 50, entity.camera.rect.y + 70, globals.WHITE, 255, utils.PixelOperator8)
+
 
         # Zrušenie klipovacieho obdlžníka po vykreslení
         screen.set_clip(None)

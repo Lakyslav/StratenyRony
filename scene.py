@@ -27,11 +27,11 @@ class Scene:
 class MainMenuScene(Scene): 
     def __init__(self):
         # Tlačidlá pre navigáciu v menu
-        self.enter = ui.ButtonUI(pygame.K_RETURN, '[Pokračovať]', 50, 200)
-        self.new_game = ui.ButtonUI(pygame.K_n, '[Nová hra]', 50, 250)  # New button
-        self.settings = ui.ButtonUI(pygame.K_s, '[Nastavenia]', 50, 300)
-        self.tutorial_button = ui.ButtonUI(pygame.K_t, '[Návod]', 50, 350)  # Tlačidlo pre návod
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Ukončiť hru]', 50, 400)
+        self.enter = ui.ButtonUI(pygame.K_RETURN, 'Pokračovať', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.new_game = ui.ButtonUI(pygame.K_n, 'Nová hra', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # New button
+        self.settings = ui.ButtonUI(pygame.K_s, 'Nastavenia', 50, 300, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.tutorial_button = ui.ButtonUI(pygame.K_t, 'Návod', 50, 350, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo pre návod
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Ukončiť hru', 50, 400, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
 
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
@@ -74,7 +74,7 @@ class MainMenuScene(Scene):
     def draw(self, sm, screen):
         screen.blit(self.background, (0, 0))
         # Nastavenie pozadia a vykreslenie názvu menu
-        utils.drawText(screen, 'Stratený Rony', 50, 50, globals.DARK_GREY, 255,utils.PixelOperator8)
+        utils.drawText(screen, 'Stratený Rony', 50, 50, globals.DARK_GREY, 255,utils.PixelOperator8_Bold)
 
         # Vykreslenie tlačidiel v menu
         self.enter.draw(screen)
@@ -89,22 +89,11 @@ class MainMenuScene(Scene):
 class TutorialScene(Scene):
     def __init__(self):
         # Tlačidlo na návrat do hlavného menu
-        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, '[Návrat na menu]', 450, 400)
-        
-        # Fonty pre texty inštrukcií
-        self.title_font = pygame.font.Font(None, 40)
-        self.option_font = pygame.font.Font(None, 30)
-        
-        # Texty s ovládaním
-        self.controls_text = [
-            "Ovládanie:",
-            "W - skok",
-            "A - pohyb doľava",
-            "D - pohyb doprava",
-            "Q - Priblíženie",
-            "E - Odialenie",
-        ]
+        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 440, 438, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.controls_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 50, 50, normal_img=r"images\UI\Settings BG.png",width=222,height=462, align_top=True, align_center=False)
+        self.tutorials_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 272, 50, normal_img=r"images\UI\Settings BG.png",width=368,height=462, align_top=True, align_center=False)
 
+    
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
@@ -117,23 +106,31 @@ class TutorialScene(Scene):
     def update(self, sm, inputStream):
         # Aktualizácia stavu tlačidla
         self.menu_button.update(inputStream)
+        self.controls_text.update(inputStream)
+        self.tutorials_text.update(inputStream)
 
     def draw(self, sm, screen):
         screen.blit(self.background, (0, 0))
 
-        # Vykreslenie názvu návodu
-        title_surface = self.title_font.render("Návod na ovládanie", True, globals.DARK_GREY)
-        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 50))
-
-        # Vykreslenie inštrukcií na ovládanie
-        y_offset = 100
-        for line in self.controls_text:
-            control_surface = self.option_font.render(line, True, globals.DARK_GREY)
-            screen.blit(control_surface, (screen.get_width() // 2 - control_surface.get_width() // 2, y_offset))
-            y_offset += 40  # Nastavenie rozostupu medzi riadkami
-
+        # Texty pre hlasitosť zvukových efektov a hudby
+        nadpis = f"  Ovládanie"
+        line1 = f"  W - skok"
+        line2 = f"  A - pohyb doľava"
+        line3 = f"  D - pohyb doprava"
+        line4 = f"  ESC - návrat späť"
+        # Zostavíme dynamický text, ktorý chceme zobraziť na tlačidle
+        c_text = f"\n\n{nadpis}\n\n{line1}\n\n{line2}\n\n{line3}\n\n{line4}"
+        tut_text = f"\n\n  Návod\n\n  Cieľom hry je prejsť 5 úrovní\n  za čo najrýchleší čas a doniesť tým \n  strateného psíka Ronyho späť za\n  jeho rodinou. Hra sa odohráva v\n  niekoľkých rôznych prostrediach\n  ako napríklad lúka,hory, a les.\n  Počas priebehu hry je možné sa\n  hocikedy vrátiť na\n  predchádzajúcu obrazovku\n  pomocou tlačidla ESC. Cieľ \n  každej úrovne je označený\n  krabicou s otáznikom"
+        # Nastavíme text do tlačidla (ako text na pozadí tlačidla)
+        self.controls_text.text = c_text
+        self.tutorials_text.text = tut_text
+        # Vykreslíme tlačidlo so správnym textom
+        self.controls_text.draw(screen)
+        self.tutorials_text.draw(screen)
         # Vykreslenie tlačidla na návrat
         self.menu_button.draw(screen)
+
+
 
 
 # Scéna pre nastavenia zvuku
@@ -147,37 +144,20 @@ class SettingsScene(Scene):
         globals.soundManager.loadSettings(self.sfx_volume, self.music_volume)
 
         # Tlačidlá na úpravu hlasitosti
-        self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '[+]', 450, 200)
-        self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '[-]', 500, 200)
+        self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '+', 272, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
+        self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '-', 312, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
 
-        self.increase_music_button = ui.ButtonUI(pygame.K_UP, '[+]', 450, 300)
-        self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '[-]', 500, 300)
+        self.increase_music_button = ui.ButtonUI(pygame.K_UP, '+', 272, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
+        self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '-', 312, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
 
-        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, '[Menu]', 450, 400)
+        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 450, 444, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
 
-        # Fonty pre texty
-        self.title_font = pygame.font.Font(None, 40)
-        self.option_font = pygame.font.Font(None, 30)
+
+        self.dynamic_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 50, 50, normal_img=r"images\UI\Settings BG.png",width=222,height=462, align_top=True)
 
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
-    def input(self, inputStream):
-        if self.increase_sfx_button.is_pressed():
-            self.sfx_volume = min(self.sfx_volume + 0.1, 1.0)
-            globals.soundManager.setSoundVolume(self.sfx_volume)
-        
-        if self.decrease_sfx_button.is_pressed():
-            self.sfx_volume = max(self.sfx_volume - 0.1, 0.0)
-            globals.soundManager.setSoundVolume(self.sfx_volume)
-
-        if self.increase_music_button.is_pressed():
-            self.music_volume = min(self.music_volume + 0.1, 1.0)
-            globals.soundManager.setMusicVolume(self.music_volume)
-
-        if self.decrease_music_button.is_pressed():
-            self.music_volume = max(self.music_volume - 0.1, 0.0)
-            globals.soundManager.setMusicVolume(self.music_volume)
     def onExit(self):
         globals.soundManager.saveSettings()
 
@@ -224,25 +204,26 @@ class SettingsScene(Scene):
         self.increase_music_button.update(inputStream)
         self.decrease_music_button.update(inputStream)
         self.menu_button.update(inputStream)
+        self.dynamic_button.update(inputStream)
+
 
     def draw(self, sm, screen):
+        # Vykreslenie pozadia celej scény
         screen.blit(self.background, (0, 0))
 
-        # Vykreslenie názvu nastavení
-        title_surface = self.title_font.render("Nastavenia", True, (255, 255, 255))
-        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 50))
-
         # Texty pre hlasitosť zvukových efektov a hudby
+        nadpis = f"Nastavenia"
         sfx_text = f"Hlasitosť zvuku: {self.sfx_volume:.1f}"
         music_text = f"Hlasitosť hudby: {self.music_volume:.1f}"
 
-        sfx_surface = self.option_font.render(sfx_text, True, (255, 255, 255))
-        music_surface = self.option_font.render(music_text, True, (255, 255, 255))
+        # Zostavíme dynamický text, ktorý chceme zobraziť na tlačidle
+        dynamic_text = f"\n\n{nadpis}\n\n{sfx_text}\n\n{music_text}"
 
-        screen.blit(sfx_surface, (200, 200))
-        screen.blit(music_surface, (200, 300))
+        # Nastavíme text do tlačidla (ako text na pozadí tlačidla)
+        self.dynamic_button.text = dynamic_text
 
-        # Vykreslenie tlačidiel
+        # Vykreslíme tlačidlo so správnym textom
+        self.dynamic_button.draw(screen)
         self.increase_sfx_button.draw(screen)
         self.decrease_sfx_button.draw(screen)
         self.increase_music_button.draw(screen)
@@ -252,15 +233,16 @@ class SettingsScene(Scene):
 class LevelSelectScene(Scene):
     def __init__(self):
         # Definovanie tlačidiel pre výber úrovne
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Odísť do menu]', 50, 300)
-        self.a_button = ui.ButtonUI(pygame.K_a, '[A]', 50, 250)  # Tlačidlo pre predchádzajúcu úroveň
-        self.d_button = ui.ButtonUI(pygame.K_d, '[D]', 150, 250)  # Tlačidlo pre nasledujúcu úroveň
-        self.enter_button = ui.ButtonUI(pygame.K_RETURN, '[Spustiť]', 50, 350)  # Tlačidlo na výber úrovne
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 50, 300, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.a_button = ui.ButtonUI(pygame.K_LEFT, '', 50, 250, normal_img=r"images\UI\Arrow Left.png",width=24,height=42)  # Tlačidlo pre predchádzajúcu úroveň
+        self.d_button = ui.ButtonUI(pygame.K_RIGHT, '', 150, 250, normal_img=r"images\UI\Arrow Right.png",width=24,height=42)  # Tlačidlo pre nasledujúcu úroveň
+        self.enter_button = ui.ButtonUI(pygame.K_RETURN, 'Spustiť', 50, 350, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo na výber úrovne
 
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
     def onEnter(self):
+        globals.loadProgress()
         # Prehrávanie hudby pre menu
         globals.soundManager.playMusicFade('menu')
     
@@ -276,9 +258,9 @@ class LevelSelectScene(Scene):
 
     def input(self, sm, inputStream):
         # Klávesové vstupy pre výber úrovne
-        if inputStream.keyboard.isKeyPressed(pygame.K_a) or self.a_button.on:
+        if inputStream.keyboard.isKeyPressed(pygame.K_LEFT) or inputStream.keyboard.isKeyPressed(pygame.K_a) or self.a_button.on:
             globals.curentLevel = max(globals.curentLevel - 1, 1)  # Prechod na predchádzajúcu úroveň
-        if inputStream.keyboard.isKeyPressed(pygame.K_d) or self.d_button.on:
+        if inputStream.keyboard.isKeyPressed(pygame.K_RIGHT) or inputStream.keyboard.isKeyPressed(pygame.K_d) or self.d_button.on:
             globals.curentLevel = min(globals.curentLevel + 1, globals.lastCompletedLevel)  # Prechod na nasledujúcu úroveň
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter_button.on:
             level.loadLevel(globals.curentLevel)  # Načítanie vybranej úrovne
@@ -325,9 +307,12 @@ class GameScene(Scene):
         self.display_timer = 0  # Separate display timer
         self.start_time = 0  # Time when the level starts
         # Tlačidlá pre ovládanie pohybu (W, A, D)
-        self.button_a = ui.ButtonUI(pygame.K_a, '[A]', 10, globals.SCREEN_SIZE[1] - 100)
-        self.button_w = ui.ButtonUI(pygame.K_w, '[W]', 45, globals.SCREEN_SIZE[1] - 120)
-        self.button_d = ui.ButtonUI(pygame.K_d, '[D]', 85, globals.SCREEN_SIZE[1] - 100)
+        self.button_a = ui.ButtonUI(pygame.K_a, 'A', 60, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
+        self.button_w = ui.ButtonUI(pygame.K_w, 'W', 85, globals.SCREEN_SIZE[1] - 151, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
+        self.button_d = ui.ButtonUI(pygame.K_d, 'D', 111, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
+
+        #Hud tlačidlá
+        self.time_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]-197, 0, normal_img=r"images\UI\Button BG.png")
 
     def onEnter(self):
         # Resetuj časovač
@@ -367,6 +352,9 @@ class GameScene(Scene):
         self.button_a.update(inputStream)
         self.button_d.update(inputStream)
 
+
+        self.time_button.update(inputStream)
+
         self.display_timer = (pygame.time.get_ticks() - self.start_time) / 1000
 
 
@@ -374,8 +362,13 @@ class GameScene(Scene):
         # Nastavenie pozadia
 
 
+
         # Vykreslenie obsahu hry (entít, atď.)
         self.cameraSystem.update(screen)
+
+
+
+        self.time_button.draw(screen)
 
         # Vykreslenie tlačidiel pre pohyb
         self.button_w.draw(screen)
@@ -388,11 +381,13 @@ class GameScene(Scene):
         time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
         utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255,utils.PixelOperator8)
 
+
+
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Návrat na výber úrovní]', 50, 200)
-        self.enter = ui.ButtonUI(pygame.K_RETURN, '[Pokračuj daľej]', 50, 250)  # Tlačidlo pre pokračovanie
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
+        self.enter = ui.ButtonUI(pygame.K_RETURN, 'Pokračuj daľej', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")  # Tlačidlo pre pokračovanie
     def onEnter(self):
         # Prehrávanie hudby pri výhre
         globals.soundManager.playMusicFade('won')
@@ -438,8 +433,8 @@ class WinScene(Scene):
 class LoseScene(Scene):
     def __init__(self):
         self.alpha = 0
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, '[Návrat na výber úrovní]', 50, 200)
-        self.restart_button = ui.ButtonUI(pygame.K_r, '[Reštart]', 50, 250)  # Tlačidlo pre reštart úrovne
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Návrat na výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
+        self.restart_button = ui.ButtonUI(pygame.K_r, 'Reštart', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")  # Tlačidlo pre reštart úrovne
 
     def onEnter(self):
         # Prehrávanie hudby pri prehre

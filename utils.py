@@ -6,6 +6,7 @@ import globals
 pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 24)
 PixelOperator8 = pygame.font.Font('font\PixelOperator8.ttf', 24)
+PixelOperator8_Bold = pygame.font.Font('font\PixelOperator8_Bold.ttf', 24)
 
 # Funkcia na vykreslenie obrázka s priehľadnosťou
 # Inšpirované zdrojom: https://nerdparadise.com/programming/pygameblitopacity
