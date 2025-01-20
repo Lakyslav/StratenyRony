@@ -433,7 +433,7 @@ class WinScene(Scene):
 class LoseScene(Scene):
     def __init__(self):
         self.alpha = 0
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Návrat na výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
         self.restart_button = ui.ButtonUI(pygame.K_r, 'Reštart', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")  # Tlačidlo pre reštart úrovne
 
     def onEnter(self):

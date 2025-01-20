@@ -1,7 +1,6 @@
 import soundmanager  # Importovanie modulu na správu zvukov
 import configparser
 
-
 # Ulož potup do savegame.ini
 def saveProgress():
     config = configparser.ConfigParser()
@@ -45,7 +44,10 @@ curentLevel = None
 
 levelTimers = {i: 0.0 for i in range(1, 4)}
 
-# Rozmery obrazovky
+
+
+
+# Rozmery obrazovkyz
 SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)
 
 # Definovanie farieb pomocou RGB hodnôt
