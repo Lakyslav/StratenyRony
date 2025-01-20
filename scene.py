@@ -307,9 +307,9 @@ class GameScene(Scene):
         self.display_timer = 0  # Separate display timer
         self.start_time = 0  # Time when the level starts
         # Tlačidlá pre ovládanie pohybu (W, A, D)
-        self.button_a = ui.ButtonUI(pygame.K_a, 'A', 60, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
-        self.button_w = ui.ButtonUI(pygame.K_w, 'W', 85, globals.SCREEN_SIZE[1] - 151, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
-        self.button_d = ui.ButtonUI(pygame.K_d, 'D', 111, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"C:\Users\stani\OneDrive\Dokumenty\VisualStudioCode\Pygame3\font\PixelOperator8.ttf",font_size=24)
+        self.button_a = ui.ButtonUI(pygame.K_a, 'A', 60, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
+        self.button_w = ui.ButtonUI(pygame.K_w, 'W', 85, globals.SCREEN_SIZE[1] - 151, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
+        self.button_d = ui.ButtonUI(pygame.K_d, 'D', 111, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
 
         #Hud tlačidlá
         self.time_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]-197, 0, normal_img=r"images\UI\Button BG.png")
