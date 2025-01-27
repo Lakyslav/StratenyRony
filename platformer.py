@@ -7,13 +7,15 @@ import globals
 import inputstream
 import soundmanager 
 
-
-
-
 # Inicializácia pygame a ostatných komponentov
 pygame.init()  # Inicializácia pygame knižnice
 screen = pygame.display.set_mode(globals.SCREEN_SIZE)  # Nastavenie veľkosti okna
 pygame.display.set_caption('Stratený Rony')  # Nastavenie názvu okna
+
+# Nastavenie ikony hry
+icon = pygame.image.load('images\dachshund_zivot.png')  # Načítanie obrázka pre ikonu
+pygame.display.set_icon(icon)  # Nastavenie ikony hry
+
 clock = pygame.time.Clock()  # Hodiny na kontrolu FPS (rýchlosti snímok za sekundu)
 
 # Inicializácia SoundManageru po načítaní nastavení
@@ -54,9 +56,3 @@ while running:
     clock.tick(60)  # Udržiavanie 60 FPS
 
 pygame.quit() # Ukončenie pygame po ukončení hry
-
-
-
-
-
-

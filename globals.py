@@ -5,7 +5,7 @@ import configparser
 def saveProgress():
     config = configparser.ConfigParser()
     config['Progress'] = {
-        'maxLevel': maxLevel,
+        'highestLevel': highestLevel,
         'lastCompletedLevel': lastCompletedLevel,
         'curentLevel': curentLevel,
         'playerLives': player1.battle.lives if player1 and player1.battle else 3,
@@ -17,11 +17,11 @@ def saveProgress():
 
 # Načítaj postup zo savegame.ini
 def loadProgress():
-    global maxLevel, lastCompletedLevel, curentLevel, player1, levelTimers
+    global highestLevel, lastCompletedLevel, curentLevel, player1, levelTimers
     config = configparser.ConfigParser()
     if config.read('savegame.ini'):
         if 'Progress' in config:
-            maxLevel = int(config['Progress'].get('maxLevel', maxLevel))
+            highestLevel = int(config['Progress'].get('highestLevel', highestLevel))
             lastCompletedLevel = int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel))
             curentLevel = int(config['Progress'].get('curentLevel', curentLevel))
             if player1:
@@ -30,7 +30,7 @@ def loadProgress():
                 if player1.score:
                     player1.score.score = int(config['Progress'].get('playerScore', player1.score.score))
         if 'Timers' in config:
-            for i in range(1, maxLevel + 1):
+            for i in range(1, highestLevel + 1):
                 levelTimers[i] = float(config['Timers'].get(f'level{i}', 0.0))
 
 
@@ -38,13 +38,18 @@ def loadProgress():
 world = None  # Aktuálny svet (úroveň)
 
 # Budú nastavené pomocou loadProgress
-maxLevel = None  
+maxLevel = 5
+highestLevel = None
 lastCompletedLevel = None 
 curentLevel = None  
 
-levelTimers = {i: 0.0 for i in range(1, 4)}
+levelTimers = {i: 0.0 for i in range(1, 6)}
 
 
+import os
+
+def checkFileExists(filename):
+    return os.path.isfile(filename)
 
 
 # Rozmery obrazovkyz

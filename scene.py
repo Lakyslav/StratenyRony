@@ -42,27 +42,48 @@ class MainMenuScene(Scene):
         globals.soundManager.playMusicFade('menu')
 
 
-        
     def input(self, sm, inputStream):
-        # Klávesové vstupy pre rôzne akcie
-        if self.new_game.on or inputStream.keyboard.isKeyPressed(pygame.K_n):
-            # Reset progress
-            globals.maxLevel = 3
+        # Check if Enter key is pressed and savegame.ini does not exist
+        if (inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on) and not globals.checkFileExists('savegame.ini'):
+            globals.highestLevel = 1
             globals.lastCompletedLevel = 1
             globals.curentLevel = 1
             globals.player1.battle.lives = 3
             globals.player1.score.score = 0
-            globals.saveProgress()
-            self.enter.on = True
-        if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on:
-            globals.loadProgress()
-            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Prechod na výber úrovne
+            globals.levelTimers = {i: 0.0 for i in range(1, 6)}
+            globals.saveProgress()  # Save the reset progress
+            globals.loadProgress()  # Load the saved progress
+            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Transition to level selection
+
+        # Reset progress if new game is triggered or "n" is pressed
+        if self.new_game.on or inputStream.keyboard.isKeyPressed(pygame.K_n):
+            globals.highestLevel = 1
+            globals.lastCompletedLevel = 1
+            globals.curentLevel = 1
+            globals.player1.battle.lives = 3
+            globals.player1.score.score = 0
+            globals.levelTimers = {i: 0.0 for i in range(1, 6)}
+            globals.saveProgress()  # Save the reset progress
+            self.enter.on = True  # Trigger the enter action
+
+        # Handle the Enter key to load progress and transition to level select
+        if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on and globals.checkFileExists('savegame.ini'):
+            globals.loadProgress()  # Load the saved progress
+            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Transition to level selection
+
+        # Transition to settings if "s" is pressed
         if inputStream.keyboard.isKeyPressed(pygame.K_s) or self.settings.on:
-            sm.push(FadeTransitionScene([self], [SettingsScene()]))  # Prechod na nastavenia
+            sm.push(FadeTransitionScene([self], [SettingsScene()]))  # Transition to settings scene
+
+        # Transition to tutorial if "t" is pressed
         if inputStream.keyboard.isKeyPressed(pygame.K_t) or self.tutorial_button.on:
-            sm.push(FadeTransitionScene([self], [TutorialScene()]))  # Prechod na návod
+            sm.push(FadeTransitionScene([self], [TutorialScene()]))  # Transition to tutorial scene
+
+        # Exit the game if Escape key is pressed
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE) or self.esc.on:
             sys.exit()
+
+
     def update(self, sm, inputStream):
         # Aktualizácia stavu tlačidiel
         self.enter.update(inputStream)
@@ -232,20 +253,35 @@ class SettingsScene(Scene):
 
 class LevelSelectScene(Scene):
     def __init__(self):
+
+
+        self.a_button = ui.ButtonUI(pygame.K_LEFT, '', 260 , 350, normal_img=r"images\UI\Arrow Left.png", hover_img=r"images\UI\Arrow Left-on.png", width=24, height=42)  # Tlačidlo pre predchádzajúcu úroveň
+        self.d_button = ui.ButtonUI(pygame.K_RIGHT, '', 420-24, 350, normal_img=r"images\UI\Arrow Right.png", hover_img=r"images\UI\Arrow Right-on.png", width=24, height=42)  # Tlačidlo pre nasledujúcu úroveň
+
+
         # Definovanie tlačidiel pre výber úrovne
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 50, 300, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
-        self.a_button = ui.ButtonUI(pygame.K_LEFT, '', 50, 250, normal_img=r"images\UI\Arrow Left.png",width=24,height=42)  # Tlačidlo pre predchádzajúcu úroveň
-        self.d_button = ui.ButtonUI(pygame.K_RIGHT, '', 150, 250, normal_img=r"images\UI\Arrow Right.png",width=24,height=42)  # Tlačidlo pre nasledujúcu úroveň
-        self.enter_button = ui.ButtonUI(pygame.K_RETURN, 'Spustiť', 50, 350, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo na výber úrovne
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 65, 425, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.enter_button = ui.ButtonUI(pygame.K_RETURN, 'Spustiť', 415, 425, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo na výber úrovne
+
+        self.pole = ui.ButtonUI(pygame.K_AMPERSAND, '', 50, 50, normal_img=r"images\UI\Settings BG.png",width=580,height=462, align_top=True, align_center=False)
 
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
+
+        # Načítanie obrázkov pre jednotlivé úrovne
+        self.level_images = {
+            i: {
+                'selected': pygame.image.load(f'images/UI/{i}.png').convert_alpha(),
+                'unselected': pygame.image.load(f'images/UI/{i}-off.png').convert_alpha()
+            }
+            for i in range(1, 6)
+        }
 
     def onEnter(self):
         globals.loadProgress()
         # Prehrávanie hudby pre menu
         globals.soundManager.playMusicFade('menu')
-    
+
     def onExit(self):
         globals.saveProgress()
 
@@ -255,13 +291,15 @@ class LevelSelectScene(Scene):
         self.a_button.update(inputStream)
         self.d_button.update(inputStream)
         self.enter_button.update(inputStream)
+        self.pole.update(inputStream)
+
 
     def input(self, sm, inputStream):
         # Klávesové vstupy pre výber úrovne
         if inputStream.keyboard.isKeyPressed(pygame.K_LEFT) or inputStream.keyboard.isKeyPressed(pygame.K_a) or self.a_button.on:
             globals.curentLevel = max(globals.curentLevel - 1, 1)  # Prechod na predchádzajúcu úroveň
         if inputStream.keyboard.isKeyPressed(pygame.K_RIGHT) or inputStream.keyboard.isKeyPressed(pygame.K_d) or self.d_button.on:
-            globals.curentLevel = min(globals.curentLevel + 1, globals.lastCompletedLevel)  # Prechod na nasledujúcu úroveň
+            globals.curentLevel = min(globals.curentLevel + 1, globals.highestLevel)  # Prechod na nasledujúcu úroveň
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter_button.on:
             level.loadLevel(globals.curentLevel)  # Načítanie vybranej úrovne
             sm.push(FadeTransitionScene([self], [GameScene()]))
@@ -272,25 +310,42 @@ class LevelSelectScene(Scene):
             sm.push(FadeTransitionScene([self], [MainMenuScene()]))
 
     def draw(self, sm, screen):
+
         # Nastavenie pozadia
         screen.blit(self.background, (0, 0))
-        utils.drawText(screen, 'Výber úrovní', 50, 50, globals.DARK_GREY, 255)
-        
+
+        time_in_seconds = globals.levelTimers.get(globals.curentLevel, None)
+        if time_in_seconds is not None and time_in_seconds != 0.00:
+            minutes = int(time_in_seconds // 60)
+            seconds = int(time_in_seconds % 60)
+            milliseconds = int((time_in_seconds * 100) % 100)
+            time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
+        else:
+            time_text = "Úroveň nedokončená"
+
+        pole_text = f"\n\n  Výber úrovní\n\n\n\n\n\n\n  Čas: {time_text}"    
+
+        self.pole.text = pole_text
         # Vykreslenie tlačidiel
+        self.pole.draw(screen)
         self.esc.draw(screen)
         self.a_button.draw(screen)  # Vykreslenie tlačidla pre predchádzajúcu úroveň
         self.d_button.draw(screen)  # Vykreslenie tlačidla pre nasledujúcu úroveň
         self.enter_button.draw(screen)  # Vykreslenie tlačidla pre výber úrovne
 
-        # Zobrazenie úrovní
-        for levelNumber in range(1, globals.maxLevel + 1):
-            c = globals.WHITE
-            if levelNumber == globals.curentLevel:
-                c = globals.GREEN
-            a = 255
-            if levelNumber > globals.lastCompletedLevel:
-                a = 100
-            utils.drawText(screen, str(levelNumber), levelNumber * 100, 100, c, a)
+        # Zobrazenie úrovní ako obrázkov
+        start_x = 70  # 10 px od začiatku poľa
+        end_x = 610  # 10 px od konca poľa (50 + 580 - 10)
+        spacing = (end_x - start_x - 5 * 52) // 4  # Dynamický výpočet medzery medzi obrázkami
+        y = 150
+
+        for i, level_number in enumerate(range(1, globals.maxLevel + 1)):
+            x = start_x + i * (52 + spacing)
+            image = self.level_images[level_number]['selected'] if level_number == globals.curentLevel else self.level_images[level_number]['unselected']
+            screen.blit(image, (x, y))
+
+
+        
 
 
 class GameScene(Scene):
@@ -335,6 +390,8 @@ class GameScene(Scene):
             levelToUnlock = nextLevel
             globals.lastCompletedLevel = levelToUnlock
             globals.curentLevel = nextLevel
+            if globals.lastCompletedLevel > globals.highestLevel:
+                globals.highestLevel = globals.lastCompletedLevel
 
             sm.push(WinScene())
         if globals.world.isLost():
@@ -386,13 +443,15 @@ class GameScene(Scene):
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
-        self.enter = ui.ButtonUI(pygame.K_RETURN, 'Pokračuj daľej', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")  # Tlačidlo pre pokračovanie
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.enter = ui.ButtonUI(pygame.K_RETURN, 'Pokračuj daľej', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo pre pokračovanie
     def onEnter(self):
         # Prehrávanie hudby pri výhre
         globals.soundManager.playMusicFade('won')
 
     def onExit(self):
+        globals.saveProgress()  # Save progress here
+
         # Prehrávanie hudby pri opustení scény
         globals.soundManager.playMusicFade('level')
 
@@ -433,8 +492,8 @@ class WinScene(Scene):
 class LoseScene(Scene):
     def __init__(self):
         self.alpha = 0
-        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")
-        self.restart_button = ui.ButtonUI(pygame.K_r, 'Reštart', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png")  # Tlačidlo pre reštart úrovne
+        self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní', 50, 200, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.restart_button = ui.ButtonUI(pygame.K_r, 'Reštart', 50, 250, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo pre reštart úrovne
 
     def onEnter(self):
         # Prehrávanie hudby pri prehre
