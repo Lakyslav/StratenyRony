@@ -353,6 +353,7 @@ class GameScene(Scene):
         # Inicializácia rôznych systémov hry
         self.cameraSystem = engine.CameraSystem()
         self.collectionSystem = engine.CollectionSystem()
+        self.superjumpSystem = engine.SuperJumpSystem()
         self.battleSystem = engine.BattleSystem()
         self.inputSystem = engine.InputSystem()
         self.physicsSystem = engine.PhysicsSystem()
@@ -401,6 +402,7 @@ class GameScene(Scene):
         # Aktualizácia systémov hry
         self.inputSystem.update(inputStream=inputStream)
         self.collectionSystem.update()
+        self.superjumpSystem.update()
         self.battleSystem.update()
         self.physicsSystem.update()
         self.animationSystem.update()
@@ -408,7 +410,6 @@ class GameScene(Scene):
         self.button_w.update(inputStream)
         self.button_a.update(inputStream)
         self.button_d.update(inputStream)
-
 
         self.time_button.update(inputStream)
 

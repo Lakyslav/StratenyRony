@@ -54,6 +54,21 @@ def makeGranule(x, y):
     entity.type = 'collectable'  # Typ entity je zbierateľný objekt
     return entity
 
+
+
+super0 = pygame.image.load('images\platformy\platforma_071.png')
+super1 = pygame.image.load('images\platformy\platforma_072.png')
+super0 = pygame.transform.scale(super0, (45, 45))
+super1 = pygame.transform.scale(super1, (45, 45))
+
+def makeSuperJump(x, y):
+    entity = engine.Entity()  # Vytvorí novú entitu
+    entity.position = engine.Position(x, y, 45, 45)  # Nastaví pozíciu a veľkosť
+    entityAnimation = engine.Animation([super0, super1])  # Animácia granule
+    entity.animations.add('idle', entityAnimation)  # Pridanie animácie do entity
+    entity.type = 'superjump'  # Typ entity je super jump
+    return entity
+
 # Načítanie obrázku nepriateľa
 enemy0 = pygame.image.load('images\spike_monster.png')
 

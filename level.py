@@ -91,6 +91,9 @@ def loadLevel(levelNumber):
                 utils.makeGranule(200, 200),
                 utils.makeGranule(250, 200),
 
+
+                utils.makeSuperJump(1255,160),
+
                 # Enemy on the second platform
                 utils.makeEnemy(850, 160),
 

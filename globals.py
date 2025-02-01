@@ -5,9 +5,9 @@ import configparser
 def saveProgress():
     config = configparser.ConfigParser()
     config['Progress'] = {
-        'highestLevel': highestLevel,
-        'lastCompletedLevel': lastCompletedLevel,
-        'curentLevel': curentLevel,
+        'highestLevel': min(highestLevel, maxLevel),
+        'lastCompletedLevel': min(lastCompletedLevel, maxLevel),
+        'curentLevel': min(curentLevel, maxLevel),
         'playerLives': player1.battle.lives if player1 and player1.battle else 3,
         'playerScore': player1.score.score if player1 and player1.score else 0
     }
@@ -21,9 +21,9 @@ def loadProgress():
     config = configparser.ConfigParser()
     if config.read('savegame.ini'):
         if 'Progress' in config:
-            highestLevel = int(config['Progress'].get('highestLevel', highestLevel))
-            lastCompletedLevel = int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel))
-            curentLevel = int(config['Progress'].get('curentLevel', curentLevel))
+            highestLevel = min(int(config['Progress'].get('highestLevel', highestLevel)), maxLevel)
+            lastCompletedLevel = min(int(config['Progress'].get('lastCompletedLevel', lastCompletedLevel)), maxLevel)
+            curentLevel = min(int(config['Progress'].get('curentLevel', curentLevel)), maxLevel)
             if player1:
                 if player1.battle:
                     player1.battle.lives = int(config['Progress'].get('playerLives', player1.battle.lives))

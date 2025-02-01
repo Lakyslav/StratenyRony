@@ -63,13 +63,14 @@ class PhysicsSystem(System):
             if not entity.intention.moveLeft and not entity.intention.moveRight:
                 entity.state = 'idle'
             if entity.intention.jump and entity.on_ground:
+
                 globals.soundManager.playSound('jump')
-                entity.speed = -5
+                if entity.super_jump == True:
+                    entity.speed = -10
+                    entity.super_jump = False
 
-
-        # if entity.type == 'player':
-        #     print(entity.position.rect.x, entity.position.rect.y)
-
+                else:
+                    entity.speed = -5
 
         # horizontálny pohyb
         new_x_rect = pygame.Rect(
@@ -177,6 +178,19 @@ class CollectionSystem(System):
                         # Priadaj život
                         entity.battle.lives += 1
                         entity.score.score = 0
+
+
+class SuperJumpSystem(System):
+    def check(self, entity):
+        return entity.type == 'player'
+    
+    def updateEntity(self, screen, inputStream, entity):
+        for otherEntity in globals.world.entities:
+            if otherEntity is not entity and otherEntity.type == 'superjump':
+                if entity.position.rect.colliderect(otherEntity.position.rect) and entity.super_jump == False:
+                    globals.soundManager.playSound('granule') #Prehraj zvuk
+                    entity.super_jump = True  # Aktivácia super skoku
+  
 
 class BattleSystem(System):
     def check(self, entity):
@@ -307,8 +321,10 @@ class CameraSystem(System):
 
         self.granule_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 0, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
         self.zivot_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 50, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
+        self.super_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]/2-105, 0, normal_img=r"images\UI\Button BG.png",width=210)
         self.granule_button.draw(screen)
         self.zivot_button.draw(screen)
+
 
 
         # Vykreslenie HUD pre entitu (skóre a životy)
@@ -320,6 +336,11 @@ class CameraSystem(System):
         if entity.battle is not None:
             screen.blit(utils.zivot_image, (entity.camera.rect.x + 10, entity.camera.rect.y + 65))
             utils.drawText(screen, str(entity.battle.lives), entity.camera.rect.x + 50, entity.camera.rect.y + 70, globals.WHITE, 255, utils.PixelOperator8)
+
+        if entity.super_jump is not None:
+            if entity.super_jump == True:
+                self.super_button.draw(screen)
+                utils.drawText(screen, "SUPER SKOK", entity.camera.rect.x + globals.SCREEN_SIZE[0]/2-100, entity.camera.rect.y + 10, globals.MUSTARD, 255, utils.PixelOperator8)
 
 
         # Zrušenie klipovacieho obdlžníka po vykreslení
@@ -437,3 +458,4 @@ class Entity():
         self.intention = Intention()  # Zámery entity
         self.on_ground = False  # Zistíme, či je entita na zemi
         self.reset = resetEntity  # Funkcia na resetovanie entity
+        self.super_jump = False  # Premenná pre Super Jump
