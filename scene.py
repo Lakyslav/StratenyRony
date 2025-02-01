@@ -104,6 +104,63 @@ class MainMenuScene(Scene):
         self.tutorial_button.draw(screen)  # Vykreslenie tlačidla pre návod
         self.esc.draw(screen)
 
+class EndgameScene:
+    def __init__(self):
+        self.background = pygame.image.load('images/menu/end.png').convert()
+        self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
+        
+        # Compute total time across all levels
+        total_time = sum(globals.levelTimers.values())
+        
+        if total_time > 0:
+            minutes = int(total_time // 60)
+            seconds = int(total_time % 60)
+            milliseconds = int((total_time * 100) % 100)
+            self.time_text = f"Gratulujem\n\nPodarilo sa ti doniesť psíka Ronyho domov\n\nUrobil si to za celkový čas: {minutes:02}:{seconds:02}:{milliseconds:02}\n\nPo návrate do menu si môžeš\nskúsiť zlepšiť tvoj celkový čas "
+        else:
+            self.time_text = "Celkový čas: N/A"
+        
+        self.nadpis_text = "Zvíťazil si"
+
+        # Exit button
+        self.exit_button = ui.ButtonUI(pygame.K_RETURN, 'Menu', globals.SCREEN_SIZE[0]/2-100, globals.SCREEN_SIZE[1]-100, normal_img=r"images/UI/Button BG shadow.png", hover_img=r"images/UI/Button BG.png", hover_text_color=globals.MUSTARD)
+    
+        self.start_time = pygame.time.get_ticks()  # Track when the scene was entered
+        self.show_overlay = False  # Overlay visibility flag
+    
+    def onEnter(self):
+        # Hranie hudby pri vstupe do hlavného menu
+        globals.soundManager.playMusicFade('level')
+
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.exit_button.on:
+            sm.pop()  # Return to the main menu
+            sm.push(ui.FadeTransitionScene([self], [ui.MainMenuScene()]))
+    
+    def update(self, sm, inputStream):
+        self.exit_button.update(inputStream)
+
+        # Check if 5 seconds have passed
+        if pygame.time.get_ticks() -self.start_time > 1500:
+            self.show_overlay = True  # Enable overlay
+    
+    def draw(self, sm, screen):
+        screen.blit(self.background, (0, 0))
+        utils.drawText(screen, self.nadpis_text, globals.SCREEN_SIZE[0]/2-100, 50, globals.MUSTARD, 255, utils.PixelOperator8_Bold)
+        
+        if self.show_overlay:
+            bgSurf = pygame.Surface(globals.SCREEN_SIZE)
+            bgSurf.fill((globals.BLACK))
+            utils.blit_alpha(screen, bgSurf, (0, 0), 180)  # Dark overlay
+            lines = self.time_text.split('\n')
+            y_offset = 150
+            for line in lines:
+                utils.drawText(screen, line, 50, y_offset, globals.WHITE, 255, utils.PixelOperator8)
+                y_offset += 30
+            self.exit_button.draw(screen)
+        
+
+
         
 
 # Scéna s návodom
@@ -165,11 +222,11 @@ class SettingsScene(Scene):
         globals.soundManager.loadSettings(self.sfx_volume, self.music_volume)
 
         # Tlačidlá na úpravu hlasitosti
-        self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '+', 272, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
-        self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '-', 312, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
+        self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '+', 272, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40,hover_text_color=globals.MUSTARD)
+        self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '-', 312, 120, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40,hover_text_color=globals.MUSTARD)
 
-        self.increase_music_button = ui.ButtonUI(pygame.K_UP, '+', 272, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
-        self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '-', 312, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40)
+        self.increase_music_button = ui.ButtonUI(pygame.K_UP, '+', 272, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40,hover_text_color=globals.MUSTARD)
+        self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '-', 312, 160, normal_img=r"images\UI\Inventory Cell.png",width=40,height=40,hover_text_color=globals.MUSTARD)
 
         self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 450, 444, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
 
@@ -393,8 +450,11 @@ class GameScene(Scene):
             globals.curentLevel = nextLevel
             if globals.lastCompletedLevel > globals.highestLevel:
                 globals.highestLevel = globals.lastCompletedLevel
-
-            sm.push(WinScene())
+            globals.saveProgress()
+            if globals.curentLevel == 6:
+                sm.push(EndgameScene())
+            else:
+                sm.push(WinScene())
         if globals.world.isLost():
             sm.push(LoseScene())
             

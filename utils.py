@@ -91,7 +91,7 @@ crow4 = pygame.image.load('images\crow_4.png')
 # Funkcia na vytvorenie nepriateľa s patrolovaním
 def makeEnemyPatrol(x, y, axis='y', distance=100,patrol_speed = 2):
     entity = engine.Entity()
-    entity.position = engine.Position(x, y, 96, 72)  # Nastaví pozíciu a veľkosť
+    entity.position = engine.Position(x, y, 72, 96)  # Nastaví pozíciu a veľkosť
     
     # Animácia pre nepriateľa
     entityAnimation = engine.Animation([crow0, crow1, crow2, crow3, crow4])
@@ -155,7 +155,7 @@ def resetPlayer(entity):
 def makePlayer(x, y):
     entity = engine.Entity()  # Vytvorí entitu pre hráča
     # Nastaví pozíciu a veľkosť hráča
-    entity.position = engine.Position(x, y, 72, 72)
+    entity.position = engine.Position(x, y, 72, 50)
     
     # Animácie pre rôzne stavy (idle, walking, falling)
     entityIdleAnimation = engine.Animation([idle0, idle1]) 

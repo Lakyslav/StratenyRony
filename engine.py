@@ -66,7 +66,7 @@ class PhysicsSystem(System):
 
                 globals.soundManager.playSound('jump')
                 if entity.super_jump == True:
-                    entity.speed = -10
+                    entity.speed = -7.5
                     entity.super_jump = False
 
                 else:
@@ -156,7 +156,7 @@ class InputSystem(System):
         else:
             entity.intention.zoomIn = False 
         if inputStream.keyboard.isKeyPressed(pygame.K_c):
-            print(f"Entity Coordinates: X={entity.position.rect.x}, Y={entity.position.rect.y+72}")
+            print(f"Entity Coordinates: X={entity.position.rect.x}, Y={entity.position.rect.y+50}")
 
 class CollectionSystem(System):
     def check(self, entity):     # Kontrola, či entita je hráč a má atribút score
