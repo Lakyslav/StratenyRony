@@ -43,7 +43,7 @@ class MainMenuScene(Scene):
 
 
     def input(self, sm, inputStream):
-        # Check if Enter key is pressed and savegame.ini does not exist
+        #  Skontroluj, či bolo stlačené tlačidlo Enter a súbor savegame.ini neexistuje.
         if (inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on) and not globals.checkFileExists('savegame.ini'):
             globals.highestLevel = 1
             globals.lastCompletedLevel = 1
@@ -51,11 +51,11 @@ class MainMenuScene(Scene):
             globals.player1.battle.lives = 3
             globals.player1.score.score = 0
             globals.levelTimers = {i: 0.0 for i in range(1, 6)}
-            globals.saveProgress()  # Save the reset progress
-            globals.loadProgress()  # Load the saved progress
-            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Transition to level selection
+            globals.saveProgress()  # Ulož resetovaný postup
+            globals.loadProgress()  # Načítaj postup
+            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Prejdi na levelSelectScene
 
-        # Reset progress if new game is triggered or "n" is pressed
+        # Obnov postup, ak bola spustená nová hra alebo bolo stlačené 'n'
         if self.new_game.on or inputStream.keyboard.isKeyPressed(pygame.K_n):
             globals.highestLevel = 1
             globals.lastCompletedLevel = 1
@@ -63,23 +63,23 @@ class MainMenuScene(Scene):
             globals.player1.battle.lives = 3
             globals.player1.score.score = 0
             globals.levelTimers = {i: 0.0 for i in range(1, 6)}
-            globals.saveProgress()  # Save the reset progress
-            self.enter.on = True  # Trigger the enter action
+            globals.saveProgress()  # Ulož resetovaný postup
+            self.enter.on = True  # Načítaj postup
 
-        # Handle the Enter key to load progress and transition to level select
+        #  Spracuj kláves Enter na načítanie postupu a prechod na výber úrovne.
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.enter.on and globals.checkFileExists('savegame.ini'):
-            globals.loadProgress()  # Load the saved progress
-            sm.push(FadeTransitionScene([self], [LevelSelectScene()]))  # Transition to level selection
+            globals.loadProgress()  
+            sm.push(FadeTransitionScene([self], [LevelSelectScene()])) 
 
-        # Transition to settings if "s" is pressed
+        # Prechod do nastavení, ak je stlačené 's'.
         if inputStream.keyboard.isKeyPressed(pygame.K_s) or self.settings.on:
-            sm.push(FadeTransitionScene([self], [SettingsScene()]))  # Transition to settings scene
+            sm.push(FadeTransitionScene([self], [SettingsScene()]))  
 
-        # Transition to tutorial if "t" is pressed
+        # Prechod do návodu, ak je stlačené 't'.
         if inputStream.keyboard.isKeyPressed(pygame.K_t) or self.tutorial_button.on:
-            sm.push(FadeTransitionScene([self], [TutorialScene()]))  # Transition to tutorial scene
+            sm.push(FadeTransitionScene([self], [TutorialScene()]))  
 
-        # Exit the game if Escape key is pressed
+        # Ukonči hru, ak je stlačené tlačidlo Escape.
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE) or self.esc.on:
             sys.exit()
 
@@ -104,45 +104,56 @@ class MainMenuScene(Scene):
         self.tutorial_button.draw(screen)  # Vykreslenie tlačidla pre návod
         self.esc.draw(screen)
 
+
 class EndgameScene:
     def __init__(self):
         self.background = pygame.image.load('images/menu/end.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
         
-        # Compute total time across all levels
+        # Vypočítanie celkového času cez všetky úrovne
         total_time = sum(globals.levelTimers.values())
         
         if total_time > 0:
             minutes = int(total_time // 60)
             seconds = int(total_time % 60)
             milliseconds = int((total_time * 100) % 100)
-            self.time_text = f"Gratulujem\n\nPodarilo sa ti doniesť psíka Ronyho domov\n\nUrobil si to za celkový čas: {minutes:02}:{seconds:02}:{milliseconds:02}\n\nPo návrate do menu si môžeš\nskúsiť zlepšiť tvoj celkový čas "
+            self.time_text = f"Gratulujem\n\nPodarilo sa ti doniesť psíka Ronyho domov\n\nUrobil si to za celkový čas: {minutes:02}:{seconds:02}:{milliseconds:02}\n"
+            
+            # Pridanie časov jednotlivých úrovní
+            for level, time in globals.levelTimers.items():
+                level_minutes = int(time // 60)
+                level_seconds = int(time % 60)
+                level_milliseconds = int((time * 100) % 100)
+                self.time_text += f"\nÚroveň {level}: {level_minutes:02}:{level_seconds:02}:{level_milliseconds:02}"
+            
+            # Pridanie záverečného riadku
+            self.time_text += "\n\nPo návrate do menu si môžeš\nskúsiť zlepšiť tvoj celkový čas"
         else:
             self.time_text = "Celkový čas: N/A"
         
         self.nadpis_text = "Zvíťazil si"
 
-        # Exit button
+        # Tlačidlo na ukončenie
         self.exit_button = ui.ButtonUI(pygame.K_RETURN, 'Menu', globals.SCREEN_SIZE[0]/2-100, globals.SCREEN_SIZE[1]-100, normal_img=r"images/UI/Button BG shadow.png", hover_img=r"images/UI/Button BG.png", hover_text_color=globals.MUSTARD)
     
-        self.start_time = pygame.time.get_ticks()  # Track when the scene was entered
-        self.show_overlay = False  # Overlay visibility flag
+        self.start_time = pygame.time.get_ticks()  # Sledovanie času, kedy hráč vstúpil do scény
+        self.show_overlay = False  # Premenná určujúca viditeľnosť prekrytia
     
     def onEnter(self):
-        # Hranie hudby pri vstupe do hlavného menu
+        # Spustenie hudby pri vstupe do hlavného menu
         globals.soundManager.playMusicFade('level')
 
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.exit_button.on:
-            sm.pop()  # Return to the main menu
+            sm.pop()  # Návrat do hlavného menu
             sm.push(ui.FadeTransitionScene([self], [ui.MainMenuScene()]))
     
     def update(self, sm, inputStream):
         self.exit_button.update(inputStream)
 
-        # Check if 5 seconds have passed
-        if pygame.time.get_ticks() -self.start_time > 1500:
-            self.show_overlay = True  # Enable overlay
+        # Kontrola, či uplynulo 5 sekúnd
+        if pygame.time.get_ticks() - self.start_time > 1500:
+            self.show_overlay = True  # Aktivovanie prekrytia
     
     def draw(self, sm, screen):
         screen.blit(self.background, (0, 0))
@@ -151,16 +162,13 @@ class EndgameScene:
         if self.show_overlay:
             bgSurf = pygame.Surface(globals.SCREEN_SIZE)
             bgSurf.fill((globals.BLACK))
-            utils.blit_alpha(screen, bgSurf, (0, 0), 180)  # Dark overlay
+            utils.blit_alpha(screen, bgSurf, (0, 0), 180)  # Tmavé prekrytie
             lines = self.time_text.split('\n')
-            y_offset = 150
+            y_offset = 50
             for line in lines:
                 utils.drawText(screen, line, 50, y_offset, globals.WHITE, 255, utils.PixelOperator8)
                 y_offset += 30
             self.exit_button.draw(screen)
-        
-
-
         
 
 # Scéna s návodom
@@ -401,7 +409,6 @@ class LevelSelectScene(Scene):
             image = self.level_images[level_number]['selected'] if level_number == globals.curentLevel else self.level_images[level_number]['unselected']
             screen.blit(image, (x, y))
 
-
         
 
 
@@ -451,7 +458,7 @@ class GameScene(Scene):
             if globals.lastCompletedLevel > globals.highestLevel:
                 globals.highestLevel = globals.lastCompletedLevel
             globals.saveProgress()
-            if globals.curentLevel == 6:
+            if globals.curentLevel == 6: # 6 normálne, 2 pokiaľ tetujem endgame scene
                 sm.push(EndgameScene())
             else:
                 sm.push(WinScene())

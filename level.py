@@ -60,19 +60,19 @@ def loadLevel(levelNumber):
     if levelNumber == 1:
         globals.world = Level(
             platforms = [
-                # Starting platform with granules
+                # 
                 pygame.Rect(100, 250, 200, 50),
 
-                # Platform after a jump
+                # 
                 pygame.Rect(400, 180, 200, 50),
 
-                # Platform with an enemy
+                # 
                 pygame.Rect(800, 180, 200, 50),
 
-                # Platform after the bird obstacle
+                # 
                 pygame.Rect(1200, 180, 200, 50),
 
-                # Platforms leading to the goal
+                # 
                 pygame.Rect(1600, 130, 200, 50),
                 pygame.Rect(2000, 80, 200, 50),
                 pygame.Rect(2350, 30, 250, 50),
@@ -80,21 +80,21 @@ def loadLevel(levelNumber):
                 pygame.Rect(2700, 250, 400, 50),
             ],
             winPlatforms= [
-                pygame.Rect(3100, 200, 50, 50)  # Goal platform
+                pygame.Rect(3100, 200, 50, 50)  # Cieľ
             ],
             deathPlatforms = [
-                pygame.Rect(0, 1000, 4000, 50)  # Death floor
+                pygame.Rect(0, 1000, 4000, 50)  # Zem smrti
             ],
             entities = [
-                # Starting granules
+                # Granule
                 utils.makeGranule(200, 180),
                 utils.makeGranule(200, 200),
                 utils.makeGranule(250, 200),
 
-
+                # Super Jump
                 utils.makeSuperJump(1255,160),
 
-                # Enemy on the second platform
+                # Stojaci nepriatel
                 utils.makeEnemy(850, 160),
 
                 # Bird obstacle
@@ -102,10 +102,10 @@ def loadLevel(levelNumber):
                 utils.makeEnemyPatrol(2600, 90, axis='x', distance=600, patrol_speed=6),
 
                 utils.makeGranule(2890,25),
-                # Player
+                # Hráč
                 globals.player1
             ],
-            invisiblePlatforms = [  # Invisible walls for the level
+            invisiblePlatforms = [  
                 pygame.Rect(50, -300, 50, 1200),
             ],
             backgrounds = [
@@ -256,7 +256,7 @@ def loadLevel(levelNumber):
                                         pygame.Rect(620+150, -190-110, 200, 50),  # koniec 
             ],
             winPlatforms=[
-                pygame.Rect(620+150, -350, 50, 50),  # Cieľová platforma (fialová)
+                pygame.Rect(620+150, -350, 50, 50),  # Cieľová platforma 
             ],
             entities=[
                 utils.makeSuperJump(495,280 ), #1
