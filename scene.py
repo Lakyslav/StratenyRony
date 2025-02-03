@@ -143,11 +143,16 @@ class EndgameScene:
         # Spustenie hudby pri vstupe do hlavného menu
         globals.soundManager.playMusicFade('level')
 
+    def onExit(self):
+        # Prehrávanie hudby pri opustení scény
+        globals.soundManager.playMusicFade('menu')
+
     def input(self, sm, inputStream):
-        if inputStream.keyboard.isKeyPressed(pygame.K_RETURN) or self.exit_button.on:
-            sm.pop()  # Návrat do hlavného menu
-            sm.push(ui.FadeTransitionScene([self], [ui.MainMenuScene()]))
-    
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE) or self.exit_button.on:
+            sm.pop()  # Návrat do predchádzajúcej scény (hlavné menu)
+            sm.push(FadeTransitionScene([self], [MainMenuScene()]))
+
+
     def update(self, sm, inputStream):
         self.exit_button.update(inputStream)
 
@@ -168,7 +173,7 @@ class EndgameScene:
             for line in lines:
                 utils.drawText(screen, line, 50, y_offset, globals.WHITE, 255, utils.PixelOperator8)
                 y_offset += 30
-            self.exit_button.draw(screen)
+        self.exit_button.draw(screen)
         
 
 # Scéna s návodom
@@ -215,9 +220,6 @@ class TutorialScene(Scene):
         self.tutorials_text.draw(screen)
         # Vykreslenie tlačidla na návrat
         self.menu_button.draw(screen)
-
-
-
 
 # Scéna pre nastavenia zvuku
 class SettingsScene(Scene):
@@ -409,9 +411,6 @@ class LevelSelectScene(Scene):
             image = self.level_images[level_number]['selected'] if level_number == globals.curentLevel else self.level_images[level_number]['unselected']
             screen.blit(image, (x, y))
 
-        
-
-
 class GameScene(Scene):
     def __init__(self):
         # Inicializácia rôznych systémov hry
@@ -506,8 +505,6 @@ class GameScene(Scene):
         time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
         utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255,utils.PixelOperator8)
 
-
-
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0
@@ -555,7 +552,6 @@ class WinScene(Scene):
         # Vykreslenie tlačidiel (Esc, Pokračovať)
         self.esc.draw(screen, alpha=self.alpha)
         self.enter.draw(screen, alpha=self.alpha)
-
 
 class LoseScene(Scene):
     def __init__(self):
