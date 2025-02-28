@@ -422,79 +422,155 @@ class GameScene(Scene):
         self.physicsSystem = engine.PhysicsSystem()
         self.animationSystem = engine.AnimationSystem()
 
-        #Časovač 
-        self.display_timer = 0  # Separate display timer
-        self.start_time = 0  # Time when the level starts
-        # Tlačidlá pre ovládanie pohybu (W, A, D)
-        self.button_a = ui.ButtonUI(pygame.K_a, 'A', 60, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
-        self.button_w = ui.ButtonUI(pygame.K_w, 'W', 85, globals.SCREEN_SIZE[1] - 151, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
-        self.button_d = ui.ButtonUI(pygame.K_d, 'D', 111, globals.SCREEN_SIZE[1] - 100, normal_img=r"images\UI\Inventory Cell.png",width=50,height=50,hover_text_color=globals.MUSTARD,font_path=r"font\PixelOperator8.ttf",font_size=24)
+        # Časovač 
+        self.display_timer = 0  
+        self.start_time = 0  
+        self.paused_time = 0  
 
-        #Hud tlačidlá
-        self.time_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]-197, 0, normal_img=r"images\UI\Button BG.png")
+        self.paused = False  # Premenná určujúca, či je hra pozastavená
+
+        # Tlačidlá pre pohyb
+        self.a_active = False
+        self.d_active = False
+        self.w_active = False
+
+        self.button_a = ui.ButtonUI(pygame.K_a, 'A', globals.SCREEN_SIZE[0]//2 - 51, globals.SCREEN_SIZE[1] - 70, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
+        self.button_w = ui.ButtonUI(pygame.K_w, 'W', globals.SCREEN_SIZE[0]//2 - 25, globals.SCREEN_SIZE[1] - 111, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
+        self.button_d = ui.ButtonUI(pygame.K_d, 'D', globals.SCREEN_SIZE[0]//2 + 1, globals.SCREEN_SIZE[1] - 70, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
+
+        # Hud tlačidlá
+        self.time_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]-210, 0, normal_img=r"images\UI\Button BG.png", width=210)
+
+        # Tlačidlo na pauzu
+        self.pause_button = ui.ButtonUI(pygame.K_p, 'II', globals.SCREEN_SIZE[0]//2 - 25, 10, normal_img=r"images\UI\Button BG.png", width=50, height=50)
+
+        # **Tlačidlá pre úpravu hlasitosti počas pauzy**
+
+        self.sfx_text = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]//2 - 200,globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Button BG.png", width=300)
+        self.music_text = ui.ButtonUI(pygame.K_AMPERSAND, '',globals.SCREEN_SIZE[0]//2 - 200,globals.SCREEN_SIZE[1]//2 - 25 , normal_img=r"images\UI\Button BG.png", width=300)
+
+        self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '+', globals.SCREEN_SIZE[0]//2 + 101, globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
+        self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '-', globals.SCREEN_SIZE[0]//2 + 142, globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
+
+        self.increase_music_button = ui.ButtonUI(pygame.K_UP, '+', globals.SCREEN_SIZE[0]//2 + 101, globals.SCREEN_SIZE[1]//2 - 25, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
+        self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '-', globals.SCREEN_SIZE[0]//2 + 142, globals.SCREEN_SIZE[1]//2 - 25, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
+
+        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní',  globals.SCREEN_SIZE[0]//2 - 193//2,  globals.SCREEN_SIZE[1]//2 + 20, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+
 
     def onEnter(self):
         # Resetuj časovač
         self.display_timer = 0
+        self.paused_time = 0
         self.start_time = pygame.time.get_ticks()
-        # Prehrávanie hudby pre úroveň
         globals.loadProgress()
         globals.soundManager.playMusicFade('level')
 
     def input(self, sm, inputStream):
-        # Skontrolovanie vstupu ESC pre návrat
+        # Pauza (kláves 'P' alebo klik na tlačidlo)
+        if inputStream.keyboard.isKeyPressed(pygame.K_p) or self.pause_button.on:
+            if not self.paused:
+                self.paused_time = pygame.time.get_ticks()  # Uloží čas pauzy
+            else:
+                pause_duration = pygame.time.get_ticks() - self.paused_time
+                self.start_time += pause_duration  # Posunie začiatok času
+
+            self.paused = not self.paused  # Prepnutie stavu pauzy
+
         if inputStream.keyboard.isKeyReleased(pygame.K_ESCAPE):
             sm.pop()
             sm.push(FadeTransitionScene([self], []))
+
+        if self.paused:
+            # **Úprava hlasitosti počas pauzy**
+            if inputStream.keyboard.isKeyPressed(pygame.K_w) or self.increase_sfx_button.on:
+                globals.soundManager.setSoundVolume(min(globals.soundManager.soundVolume + 0.1, 1.0))
+
+            if inputStream.keyboard.isKeyPressed(pygame.K_s) or self.decrease_sfx_button.on:
+                globals.soundManager.setSoundVolume(max(globals.soundManager.soundVolume - 0.1, 0.0))
+
+            if inputStream.keyboard.isKeyPressed(pygame.K_UP) or self.increase_music_button.on:
+                globals.soundManager.setMusicVolume(min(globals.soundManager.musicVolume + 0.1, 1.0))
+
+            if inputStream.keyboard.isKeyPressed(pygame.K_DOWN) or self.decrease_music_button.on:
+                globals.soundManager.setMusicVolume(max(globals.soundManager.musicVolume - 0.1, 0.0))
+            if self.menu_button.on or inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+                sm.pop()  # Návrat na predchádzajúcu scénu
+                sm.push(FadeTransitionScene([self], []))
+
+
+            return  
+
         # Skontrolovanie výhry alebo prehry
         if globals.world.isWon():
-            # Aktualizácia mapy úrovní s prístupnými úrovňami
-            nextLevel = globals.curentLevel + 1
             globals.levelTimers[globals.curentLevel] = self.display_timer
-            levelToUnlock = nextLevel
-            globals.lastCompletedLevel = levelToUnlock
-            globals.curentLevel = nextLevel
-            if globals.lastCompletedLevel > globals.highestLevel:
-                globals.highestLevel = globals.lastCompletedLevel
+            globals.curentLevel += 1
+            globals.lastCompletedLevel = max(globals.curentLevel, globals.lastCompletedLevel)
+            globals.highestLevel = max(globals.highestLevel, globals.curentLevel)
             globals.saveProgress()
-            if globals.curentLevel == 6: # 6 normálne, 2 pokiaľ tetujem endgame scene
+
+            if globals.curentLevel == 6:  
                 sm.push(EndgameScene())
             else:
                 sm.push(WinScene())
+
         if globals.world.isLost():
             sm.push(LoseScene())
-            
+
     def update(self, sm, inputStream):
-        # Aktualizácia systémov hry
+        if self.paused:
+            # Aktualizácia tlačidiel počas pauzy
+            self.pause_button.update(inputStream)
+            self.increase_sfx_button.update(inputStream)
+            self.decrease_sfx_button.update(inputStream)
+            self.increase_music_button.update(inputStream)
+            self.decrease_music_button.update(inputStream)
+            self.menu_button.update(inputStream)
+            return  
+
+        self.physicsSystem.update()
         self.inputSystem.update(inputStream=inputStream)
         self.collectionSystem.update()
         self.superjumpSystem.update()
         self.battleSystem.update()
-        self.physicsSystem.update()
         self.animationSystem.update()
-        # Aktualizácia tlačidiel pre pohyb
+
         self.button_w.update(inputStream)
         self.button_a.update(inputStream)
         self.button_d.update(inputStream)
-
+        self.pause_button.update(inputStream)
         self.time_button.update(inputStream)
 
+        # Aktualizácia časovača len ak nie je pauza
         self.display_timer = (pygame.time.get_ticks() - self.start_time) / 1000
 
+        mouse_x, mouse_y = inputStream.mouse.getPosition()
+
+        if self.button_a.on:
+            self.a_active = not self.a_active  
+        if self.button_d.on:
+            self.d_active = not self.d_active  
+        if self.button_w.on:
+            self.w_active = not self.w_active  
+
+        if self.a_active and self.button_a.is_mouse_over(mouse_x, mouse_y):
+            globals.player1.intention.moveLeft = True
+        else:
+            self.a_active = False  
+
+        if self.d_active and self.button_d.is_mouse_over(mouse_x, mouse_y):
+            globals.player1.intention.moveRight = True
+        else:
+            self.d_active = False  
+
+        if self.w_active and self.button_w.is_mouse_over(mouse_x, mouse_y):
+            globals.player1.intention.jump = True
+        else:
+            self.w_active = False  
 
     def draw(self, sm, screen):
-        # Nastavenie pozadia
-
-
-
-        # Vykreslenie obsahu hry (entít, atď.)
         self.cameraSystem.update(screen)
-
-
-
         self.time_button.draw(screen)
-
-        # Vykreslenie tlačidiel pre pohyb
         self.button_w.draw(screen)
         self.button_a.draw(screen)
         self.button_d.draw(screen)
@@ -503,8 +579,31 @@ class GameScene(Scene):
         seconds = int(self.display_timer % 60)
         milliseconds = int((self.display_timer * 100) % 100)
         time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
-        utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255,utils.PixelOperator8)
+        utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255, utils.PixelOperator8)
 
+        # Overlay a text "HRA POZASTAVENÁ" ak je pauza
+        if self.paused:
+            overlay = pygame.Surface(globals.SCREEN_SIZE)
+            overlay.fill(globals.BLACK)
+            utils.blit_alpha(screen, overlay, (0, 0), 180)
+            utils.drawText(screen, "PAUZA", globals.SCREEN_SIZE[0]//2 - 40, globals.SCREEN_SIZE[1]//2 - 120, globals.WHITE, 255)
+
+            self.sfx_text.draw(screen)
+            self.music_text.draw(screen)
+            # Vykreslenie nastavení zvuku
+            utils.drawText(screen, f"Hlasitosť zvukov: {globals.soundManager.soundVolume:.1f}", globals.SCREEN_SIZE[0]//2 - 180, globals.SCREEN_SIZE[1]//2 - 60, globals.WHITE, 255)
+            utils.drawText(screen, f"Hlasitosť hudby: {globals.soundManager.musicVolume:.1f}", globals.SCREEN_SIZE[0]//2 - 180, globals.SCREEN_SIZE[1]//2 - 15, globals.WHITE, 255)
+
+            self.increase_sfx_button.draw(screen)
+            self.decrease_sfx_button.draw(screen)
+            self.increase_music_button.draw(screen)
+            self.decrease_music_button.draw(screen)
+            self.menu_button.draw(screen)
+
+
+        self.pause_button.draw(screen)
+
+        
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0

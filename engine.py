@@ -321,7 +321,7 @@ class CameraSystem(System):
 
         self.granule_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 0, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
         self.zivot_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 50, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
-        self.super_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]/2-105, 0, normal_img=r"images\UI\Button BG.png",width=210)
+        self.super_button = ui.ButtonUI(pygame.K_AMPERSAND, '',  globals.SCREEN_SIZE[0]-210, 50, normal_img=r"images\UI\Button BG.png",width=210)
         self.granule_button.draw(screen)
         self.zivot_button.draw(screen)
 
@@ -340,7 +340,7 @@ class CameraSystem(System):
         if entity.super_jump is not None:
             if entity.super_jump == True:
                 self.super_button.draw(screen)
-                utils.drawText(screen, "SUPER SKOK", entity.camera.rect.x + globals.SCREEN_SIZE[0]/2-100, entity.camera.rect.y + 10, globals.MUSTARD, 255, utils.PixelOperator8)
+                utils.drawText(screen, "SUPER SKOK", entity.camera.rect.x + globals.SCREEN_SIZE[0]-205, entity.camera.rect.y + 60, globals.MUSTARD, 255, utils.PixelOperator8)
 
 
         # Zrušenie klipovacieho obdlžníka po vykreslení
