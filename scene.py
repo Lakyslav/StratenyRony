@@ -579,7 +579,6 @@ class GameScene(Scene):
         seconds = int(self.display_timer % 60)
         milliseconds = int((self.display_timer * 100) % 100)
         time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
-        utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255, utils.PixelOperator8)
 
         # Overlay a text "HRA POZASTAVENÁ" ak je pauza
         if self.paused:
@@ -599,6 +598,8 @@ class GameScene(Scene):
             self.increase_music_button.draw(screen)
             self.decrease_music_button.draw(screen)
             self.menu_button.draw(screen)
+
+        utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255, utils.PixelOperator8)
 
 
         self.pause_button.draw(screen)

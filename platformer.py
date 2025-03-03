@@ -1,7 +1,6 @@
 import pygame
 import engine
 import utils
-import level
 import scene
 import globals  
 import inputstream
@@ -48,7 +47,7 @@ while running:
     if sceneManager.isEmpty():  # Ak je zoznam scén prázdny, končíme hru
         running = False
     
-    
+    #print(f"FPS: {int(clock.get_fps())}")
     sceneManager.input(inputStream) # Spracovanie vstupu
     sceneManager.update(inputStream) # aktualizácia
     sceneManager.draw(screen) # kreslenie scén

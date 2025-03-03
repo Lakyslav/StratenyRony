@@ -238,22 +238,22 @@ class CameraSystem(System):
 
         # Parallax pozadia
         if globals.world.backgrounds:
+            screen.fill(globals.BLACK)
+
             for bg_image, speed in globals.world.backgrounds:
-                # Zmena veľkosti pozadia na veľkosť obrazovky
-                scaled_bg = pygame.transform.scale(bg_image, globals.SCREEN_SIZE)
-                # Získanie šírky a výšky upraveného pozadia
-                bg_width, bg_height = scaled_bg.get_size()
-                # Opakované kreslenie pozadia na vytvorenie efektu parallax
-                for x in range(-1, (cameraRect.width // bg_width) + 2):
-                    # Nastavenie pozície na osi x na základe polohy kamery a rýchlosti
-                    draw_x = (x * bg_width) - (entity.camera.worldX * speed)
-                    # Kreslenie pozadia na vypočítanej pozícii
-                    screen.blit(scaled_bg, (draw_x, 0))
-                    # Ošetrovanie posunutia, keď sa pozadie posunie mimo obrazovky
-                    if draw_x < -bg_width:
-                        screen.blit(scaled_bg, (draw_x + bg_width * 2, 0))
-                    elif draw_x > globals.SCREEN_SIZE[0]:
-                        screen.blit(scaled_bg, (draw_x - bg_width * 2, 0))
+                bg_width, _ = bg_image.get_size()
+
+                # Get parallax scrolling offset
+                camera_x = int(entity.camera.worldX * speed)
+                offset = camera_x % bg_width
+
+                # Calculate two valid positions for the background
+                first_x = -offset
+                second_x = first_x + bg_width
+
+                # Draw exactly two images only
+                screen.blit(bg_image, (first_x, 0))
+                screen.blit(bg_image, (second_x, 0))
 
 
 
@@ -271,16 +271,22 @@ class CameraSystem(System):
                 - globals.SCREEN_SIZE[1] / 5  # Shift up by a quarter of the screen height
             )
 
-
             # Interpolácia pre hladkú zmenu pozície kamery
             entity.camera.worldX = (currentX * 0.95) + (targetX * 0.05)
             entity.camera.worldY = (currentY * 0.95) + (targetY * 0.05)
         
-        # Výpočet ofsetov pre správne vykreslenie
+        # Filter entities to only render those within 1000 pixels of the player
+        visible_entities = [e for e in globals.world.entities if abs(e.position.rect.x - globals.player1.position.rect.x) < 1000]
+        # Filter platforms to only render those within 1000 pixels of the player
+        visible_platforms = [p for p in globals.world.platforms if abs(p.x - globals.player1.position.rect.x) < 1000]
+        
+        visible_win_platforms = [p for p in globals.world.winPlatforms if abs(p.x - globals.player1.position.rect.x) < 1000]
+        
+        # Print the number of visible entities
+        #print(f"Number of visible entities: {len(visible_entities)}")
+        #print(f"Number of visible platforms: {len(visible_platforms)}")
+        #print(f"Number of visible win platforms: {len(visible_win_platforms)}")
 
-
-        # Vyplnenie pozadia kamery
-        '''screen.fill(globals.BLACK)'''
 
         # Načítanie obrázkov platformy a víťaznej platformy
         platform_image = globals.world.platform_image
@@ -289,7 +295,8 @@ class CameraSystem(System):
         win_scaled = pygame.transform.scale(win_image, (50, 50))  # Zmena veľkosti víťaznej platformy na 50x50
 
         # Vykreslenie platforiem (na mieste horčicovej farby)
-        for p in globals.world.platforms + globals.world.winPlatforms:
+        # Vykreslenie platforiem (na mieste horčicovej farby)
+        for p in visible_platforms + visible_win_platforms:  # Only render visible platforms
             newPosRect = pygame.Rect(
                 (p.x * entity.camera.zoomLevel) + offsetX,
                 (p.y * entity.camera.zoomLevel) + offsetY,
@@ -297,20 +304,20 @@ class CameraSystem(System):
                 p.h * entity.camera.zoomLevel
             )
 
-            if p in globals.world.platforms:
+            if p in visible_platforms:
                 # Vykreslenie platformy s obrázkom (opakujeme podľa šírky a výšky platformy)
                 for i in range(newPosRect.width // 50):  # opakovanie podľa šírky platformy
                     for j in range(newPosRect.height // 50):  # opakovanie podľa výšky platformy
                         screen.blit(platform_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
 
-            if p in globals.world.winPlatforms:
+            if p in visible_win_platforms:
                 # Vykreslenie víťaznej platformy s obrázkom
                 for i in range(newPosRect.width // 50):
                     for j in range(newPosRect.height // 50):
                         screen.blit(win_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
 
         # Vykreslenie entít
-        for e in globals.world.entities:
+        for e in visible_entities:  # Use the filtered list of entities
             s = e.state
             a = e.animations.animationList[s]
             a.draw(screen,

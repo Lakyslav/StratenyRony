@@ -4,7 +4,9 @@ import engine
 import globals
 
 class Level:
-    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, platform_image=None,win_image=None, backgrounds=None):
+    def __init__(self, platforms=None, winPlatforms=None, entities=None, winFunc=None, 
+                 loseFunc=None, deathPlatforms=None, invisiblePlatforms=None, 
+                 platform_image=None, win_image=None, bg_paths=None):
         # Inicializácia úrovne s predvolenými hodnotami, ak nie sú poskytnuté
         self.platforms = platforms if platforms is not None else []  # Platformy
         self.winPlatforms = winPlatforms if winPlatforms is not None else []  # Výherné platformy
@@ -13,9 +15,18 @@ class Level:
         self.loseFunc = loseFunc  # Funkcia pre prehru
         self.deathPlatforms = deathPlatforms if deathPlatforms is not None else []  # Platformy, ktoré spôsobujú smrť
         self.invisiblePlatforms = invisiblePlatforms if invisiblePlatforms is not None else []  # Neviditeľné platformy
-        self.platform_image = platform_image  # Pridanie parametra platform_image
-        self.win_image = win_image  # Pridanie parametra win_image
-        self.backgrounds = backgrounds if backgrounds is not None else []
+        self.platform_image = platform_image
+        self.win_image = win_image
+        self.bg_paths = bg_paths if bg_paths is not None else []
+        self.backgrounds = []
+        self.load_backgrounds()
+
+    def load_backgrounds(self):
+        """Pre-load and scale all background images for this level."""
+        for path, speed in self.bg_paths:
+            bg_image = pygame.image.load(path).convert_alpha()
+            scaled_bg = pygame.transform.scale(bg_image, globals.SCREEN_SIZE)
+            self.backgrounds.append((scaled_bg, speed))
 
     # Skontroluje, či bola úroveň vyhraná
     def isWon(self):
@@ -31,13 +42,10 @@ class Level:
 
 
 def lostLevel(level):
-    # Prehra sa neberie ako prehra, ak hráč má ešte životy
     for entity in level.entities:
-        if entity.type == 'player':  # Hľadá entitu typu hráč
-            if entity.battle is not None:
-                if entity.battle.lives > 0:  # Ak má hráč životy
-                    return False
-    return True  # Ak hráč nemá životy, prehra je potvrdená
+        if entity.type == 'player' and entity.battle and entity.battle.lives > 0:
+            return False
+    return True
 
 
 def wonLevel(level):
@@ -60,19 +68,10 @@ def loadLevel(levelNumber):
     if levelNumber == 1:
         globals.world = Level(
             platforms = [
-                # 
                 pygame.Rect(100, 250, 200, 50),
-
-                # 
                 pygame.Rect(400, 180, 200, 50),
-
-                # 
                 pygame.Rect(800, 180, 200, 50),
-
-                # 
                 pygame.Rect(1200, 180, 200, 50),
-
-                # 
                 pygame.Rect(1600, 130, 200, 50),
                 pygame.Rect(2000, 80, 200, 50),
                 pygame.Rect(2350, 30, 250, 50),
@@ -86,69 +85,57 @@ def loadLevel(levelNumber):
                 pygame.Rect(0, 1000, 4000, 50)  # Zem smrti
             ],
             entities = [
-                # Granule
                 utils.makeGranule(200, 180),
                 utils.makeGranule(200, 200),
                 utils.makeGranule(250, 200),
-
-                # Super Jump
                 utils.makeSuperJump(1255,160),
-
-                # Stojaci nepriatel
                 utils.makeEnemy(850, 160),
-
-                # Bird obstacle
                 utils.makeEnemyPatrol(1400, 150, axis='y', distance=400, patrol_speed=4),
                 utils.makeEnemyPatrol(2600, 90, axis='x', distance=600, patrol_speed=6),
-
                 utils.makeGranule(2890,25),
-                # Hráč
                 globals.player1
             ],
             invisiblePlatforms = [  
                 pygame.Rect(50, -300, 50, 1200),
             ],
-            backgrounds = [
-                # zdroj obrázka a rýchlosť pohybu (čím menšie číslo tým rýchlejšie)
-                (pygame.image.load(r'images/pozadia/level1_1.png').convert_alpha(), 0.2),
-                (pygame.image.load(r'images/pozadia/level1_3.png').convert_alpha(), 0.4),
-                (pygame.image.load(r'images/pozadia/level1_6.png').convert_alpha(), 0.6),
-                (pygame.image.load(r'images/pozadia/level1_7.png').convert_alpha(), 0.8),
-                (pygame.image.load(r'images/pozadia/level1_8.png').convert_alpha(), 1),
-
+            bg_paths = [
+                ('images/pozadia/level1_1.png', 0.2),
+                ('images/pozadia/level1_3.png', 0.4),
+                ('images/pozadia/level1_6.png', 0.6),
+                ('images/pozadia/level1_7.png', 0.8),
+                ('images/pozadia/level1_8.png', 1),
             ],
-            platform_image = pygame.image.load('images\platformy\platforma_000.png'),
-            win_image = pygame.image.load('images\platformy\platforma_031.png'),
+            platform_image = pygame.image.load('images/platformy/platforma_000.png'),
+            win_image = pygame.image.load('images/platformy/platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
     elif levelNumber == 2:
         globals.world = Level(
-        platforms = [
-                pygame.Rect(100, 300, 375, 150),  #1
-                pygame.Rect(600, 300, 400, 150),  #2
+            platforms = [
+                pygame.Rect(100, 300, 375, 50),  #1
+                pygame.Rect(600, 300, 400, 50),  #2
                 pygame.Rect(1100, 250, 50, 50),   #3
-                pygame.Rect(1175, 400, 50, 150),  #4 
+                pygame.Rect(1175, 400, 50, 50),  #4 
                 pygame.Rect(1250, 250, 50, 50),   #5
-                pygame.Rect(1380, 400, 100, 150), #6
-                pygame.Rect(1575, 350, 200, 150), #7
-                pygame.Rect(1850, 300, 100, 150), #8
-                pygame.Rect(2130, 250, 100, 250), #9
-                pygame.Rect(2375, 200, 150, 250), #10
-                pygame.Rect(2525, 250, 100, 250), #11
-                pygame.Rect(2625, 300, 150, 200), #12
-
-                # Jaskyňa s 75px vertikálnym priestorom medzi platformami
-                pygame.Rect(2975, 350, 300, 200),  #13
-                    pygame.Rect(2975, -125, 1200, 400),
-                pygame.Rect(3125, 400, 300, 200),  #13
-
-                pygame.Rect(3425, 500, 100, 200),  #13
-                pygame.Rect(3525, 625, 500, 200),  #13
-                        pygame.Rect(3875, 500, 100, 50),  #13
-                pygame.Rect(4025, -125, 600, 950),
-
-
+                pygame.Rect(1380, 400, 100, 50), #6
+                pygame.Rect(1575, 350, 200, 50), #7
+                pygame.Rect(1850, 300, 100, 50), #8
+                pygame.Rect(2130, 250, 100, 50), #9
+                pygame.Rect(2375, 200, 150, 50), #10
+                pygame.Rect(2525, 250, 100, 50), #11
+                pygame.Rect(2625, 300, 150, 50), #12
+                pygame.Rect(2975, 350, 300, 50),  #13
+                pygame.Rect(2975, -125, 50, 400),
+                    pygame.Rect(2975, 225, 1000, 50),
+                pygame.Rect(3125, 400, 300, 50),  #13
+                    pygame.Rect(3375, 400, 50, 100),  #13
+                pygame.Rect(3425, 500, 100, 50),  #13
+                    pygame.Rect(3475, 550, 50, 100),  #13
+                pygame.Rect(3525, 625, 500, 50),  #13
+                pygame.Rect(3875, 500, 100, 50),  #13
+                    pygame.Rect(3975, 225, 50, 400),  #13
+                pygame.Rect(4025, -125, 600, 50),
             ],
             winPlatforms= [
                 pygame.Rect(3900, 575, 50, 50)
@@ -163,7 +150,6 @@ def loadLevel(levelNumber):
                 utils.makeGranule(2400, 150),
                 utils.makeGranule(2900, 300),
                 utils.makeGranule(3675, 460),
-                # Pohybujúci nepriateľ pozdĺž osi Y
                 utils.makeEnemyPatrol(500, 350, axis='y', distance=300, patrol_speed=4),
                 utils.makeEnemy(750,275),
                 globals.player1
@@ -171,14 +157,14 @@ def loadLevel(levelNumber):
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
                 pygame.Rect(50, -300, 50, 600)
             ],
-            backgrounds = [
-                (pygame.image.load(r'images/pozadia/level2_1.png').convert_alpha(), 0.2),
-                (pygame.image.load(r'images/pozadia/level2_2.png').convert_alpha(), 0.5),
-                (pygame.image.load(r'images/pozadia/level2_3.png').convert_alpha(), 0.7),
-                (pygame.image.load(r'images/pozadia/level2_4.png').convert_alpha(), 1),
+            bg_paths = [
+                ('images/pozadia/level2_1.png', 0.2),
+                ('images/pozadia/level2_2.png', 0.5),
+                ('images/pozadia/level2_3.png', 0.7),
+                ('images/pozadia/level2_4.png', 1),
             ],
-            platform_image = pygame.image.load('images\platformy\platforma_003.png'),
-            win_image = pygame.image.load('images\platformy\platforma_031.png'),
+            platform_image = pygame.image.load('images/platformy/platforma_003.png'),
+            win_image = pygame.image.load('images/platformy/platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
@@ -223,37 +209,35 @@ def loadLevel(levelNumber):
             invisiblePlatforms = [
                 pygame.Rect(50, -300, 50, 600)
             ],
-            backgrounds = [
-                (pygame.image.load(r'images/pozadia/level3_1.png').convert_alpha(), 0.2),
-                (pygame.image.load(r'images/pozadia/level3_2.png').convert_alpha(), 0.3),
-                (pygame.image.load(r'images/pozadia/level3_3.png').convert_alpha(), 0.5),
-                (pygame.image.load(r'images/pozadia/level3_4.png').convert_alpha(), 0.6),
-                (pygame.image.load(r'images/pozadia/level3_5.png').convert_alpha(), 0.8),
-                (pygame.image.load(r'images/pozadia/level3_6.png').convert_alpha(), 1),
+            bg_paths = [
+                ('images/pozadia/level3_1.png', 0.2),
+                ('images/pozadia/level3_2.png', 0.3),
+                ('images/pozadia/level3_3.png', 0.5),
+                ('images/pozadia/level3_4.png', 0.6),
+                ('images/pozadia/level3_5.png', 0.8),
+                ('images/pozadia/level3_6.png', 1),
             ],
-            platform_image = pygame.image.load('images\platformy\platforma_012.png'),
-            win_image = pygame.image.load('images\platformy\platforma_031.png'),
+            platform_image = pygame.image.load('images/platformy/platforma_012.png'),
+            win_image = pygame.image.load('images/platformy/platforma_031.png'),
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
-
- 
     elif levelNumber == 4:
         globals.world = Level(
             platforms=[
                 pygame.Rect(100, 300, 1000, 50),  # Štartovacia platforma 
-                    pygame.Rect(450, 175, 200, 50),  # 2
-                        pygame.Rect(800, 125, 400, 50),  # 3
-                          pygame.Rect(960, 30-30, 250, 50),  # 3.5
-                            pygame.Rect(600+50, 30-30, 200, 50),  # 4
-                            pygame.Rect(200, 30-30, 200, 50),  # 5
-                              pygame.Rect(250, -115, 100, 50),  # 5.5
-                                pygame.Rect(200+150, -165, 500, 50),  # 6
-                                pygame.Rect(970, -165, 100, 50),  # 7
-                                pygame.Rect(1000+170, -165, 200, 50),  # 8
-                                    pygame.Rect(1315, -280, 50, 50),  # 9
-                                      pygame.Rect(1170, -330, 150, 50),  # 9
-                                        pygame.Rect(620+150, -190-110, 200, 50),  # koniec 
+                pygame.Rect(450, 175, 200, 50),  # 2
+                pygame.Rect(800, 125, 400, 50),  # 3
+                pygame.Rect(960, 30-30, 250, 50),  # 3.5
+                pygame.Rect(600+50, 30-30, 200, 50),  # 4
+                pygame.Rect(200, 30-30, 200, 50),  # 5
+                pygame.Rect(250, -115, 100, 50),  # 5.5
+                pygame.Rect(200+150, -165, 500, 50),  # 6
+                pygame.Rect(970, -165, 100, 50),  # 7
+                pygame.Rect(1000+170, -165, 200, 50),  # 8
+                pygame.Rect(1315, -280, 50, 50),  # 9
+                pygame.Rect(1170, -330, 150, 50),  # 9
+                pygame.Rect(620+150, -190-110, 200, 50),  # koniec 
             ],
             winPlatforms=[
                 pygame.Rect(620+150, -350, 50, 50),  # Cieľová platforma 
@@ -263,19 +247,13 @@ def loadLevel(levelNumber):
                 utils.makeSuperJump(1075,100 ), #2
                 utils.makeSuperJump(335,-40),
                 utils.makeSuperJump(1320,-180),
-
                 utils.makeEnemy(520,175-25),
-
                 utils.makeEnemyPatrol(985, 50, axis='x', distance=250, patrol_speed=3),
                 utils.makeEnemyPatrol(1060, -50, axis='x', distance=250, patrol_speed=5),
-
                 utils.makeEnemyPatrol(860, -100, axis='y', distance=150, patrol_speed=2),
                 utils.makeEnemyPatrol(1070, -200, axis='y', distance=250, patrol_speed=5),
-
-
                 utils.makeGranule(445,155),
                 utils.makeGranule(600,155),
-
                 utils.makeGranule(1060,-50),
                 utils.makeGranule(1050,-50),
                 globals.player1,  # Hráč
@@ -286,13 +264,13 @@ def loadLevel(levelNumber):
             invisiblePlatforms=[
                 pygame.Rect(50, -300, 50, 800),  # Neviditeľná stena
             ],
-            backgrounds=[
-                (pygame.image.load(r'images/pozadia/level4_1.png').convert_alpha(), 0.2),
-                (pygame.image.load(r'images/pozadia/level4_2.png').convert_alpha(), 0.3),
-                (pygame.image.load(r'images/pozadia/level4_3.png').convert_alpha(), 0.5),
-                (pygame.image.load(r'images/pozadia/level4_4.png').convert_alpha(), 0.6),
-                (pygame.image.load(r'images/pozadia/level4_5.png').convert_alpha(), 0.8),
-                (pygame.image.load(r'images/pozadia/level4_6.png').convert_alpha(), 1),
+            bg_paths = [
+                ('images/pozadia/level4_1.png', 0.2),
+                ('images/pozadia/level4_2.png', 0.3),
+                ('images/pozadia/level4_3.png', 0.5),
+                ('images/pozadia/level4_4.png', 0.6),
+                ('images/pozadia/level4_5.png', 0.8),
+                ('images/pozadia/level4_6.png', 1),
             ],
             platform_image=pygame.image.load('images/platformy/platforma_012.png'),
             win_image=pygame.image.load('images/platformy/platforma_031.png'),
@@ -341,12 +319,12 @@ def loadLevel(levelNumber):
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
                 pygame.Rect(50, -300, 50, 600)
             ],
-            backgrounds = [
-                (pygame.image.load(r'images/pozadia/level5_1.png').convert_alpha(), 0.2),
-                (pygame.image.load(r'images/pozadia/level5_2.png').convert_alpha(), 0.4),
-                (pygame.image.load(r'images/pozadia/level5_3.png').convert_alpha(), 0.6),
-                (pygame.image.load(r'images/pozadia/level5_4.png').convert_alpha(), 0.8),
-                (pygame.image.load(r'images/pozadia/level5_5.png').convert_alpha(), 1),
+            bg_paths= [
+                (r'images/pozadia/level5_1.png', 0.2),
+                (r'images/pozadia/level5_2.png', 0.4),
+                (r'images/pozadia/level5_3.png', 0.6),
+                (r'images/pozadia/level5_4.png', 0.8),
+                (r'images/pozadia/level5_5.png', 1),
             ],
             platform_image = pygame.image.load('images\platformy\platforma_000.png'),
             win_image = pygame.image.load('images\platformy\platforma_031.png'),
