@@ -40,13 +40,11 @@ class Level:
             return False
         return self.loseFunc(self)  # Volanie funkcie na zistenie prehry
 
-
 def lostLevel(level):
     for entity in level.entities:
         if entity.type == 'player' and entity.battle and entity.battle.lives > 0:
             return False
     return True
-
 
 def wonLevel(level):
     # Prejde všetky výherné platformy
@@ -59,7 +57,6 @@ def wonLevel(level):
                 if player_rect.colliderect(platform):
                     return True  # Hráč vyhral
     return False  # Ak sa hráč nezrazil s výhernou platformou, nevyhral
-
 
 def loadLevel(levelNumber):
     if globals.world is None:
@@ -86,13 +83,17 @@ def loadLevel(levelNumber):
             ],
             entities = [
                 utils.makeGranule(200, 180),
-                utils.makeGranule(200, 200),
-                utils.makeGranule(250, 200),
+                utils.makeGranule(850, 90),
+                utils.makeGranule(2890,25),
+
                 utils.makeSuperJump(1255,160),
+
+                utils.makeEnemy(475, 160),
                 utils.makeEnemy(850, 160),
+                utils.makeEnemy(1600, 120),
                 utils.makeEnemyPatrol(1400, 150, axis='y', distance=400, patrol_speed=4),
                 utils.makeEnemyPatrol(2600, 90, axis='x', distance=600, patrol_speed=6),
-                utils.makeGranule(2890,25),
+
                 globals.player1
             ],
             invisiblePlatforms = [  
@@ -150,8 +151,12 @@ def loadLevel(levelNumber):
                 utils.makeGranule(2400, 150),
                 utils.makeGranule(2900, 300),
                 utils.makeGranule(3675, 460),
+
                 utils.makeEnemyPatrol(500, 350, axis='y', distance=300, patrol_speed=4),
                 utils.makeEnemy(750,275),
+                utils.makeEnemy(1645,340),
+                utils.makeEnemy(2625,290),
+                utils.makeEnemy(3670,615),
                 globals.player1
             ],
             invisiblePlatforms = [  # Neviditeľná stena pozdĺž osi Y
@@ -172,8 +177,8 @@ def loadLevel(levelNumber):
         globals.world = Level(
             platforms = [
                 pygame.Rect(100, 300, 400, 50),
-                pygame.Rect(350, 250, 50, 50),
-                pygame.Rect(400, 200, 50, 100),
+                pygame.Rect(300, 250, 50, 50),
+                pygame.Rect(350, 200, 100, 50),
                 pygame.Rect(600, 150, 400, 50),
                 pygame.Rect(1050, 275, 200, 50),
                 pygame.Rect(1325, 225, 100, 50),
@@ -191,10 +196,17 @@ def loadLevel(levelNumber):
                 pygame.Rect(3525+300, 0, 50, 50)
             ],
             deathPlatforms = [
-                pygame.Rect(0, 800, 2000, 50)
+                pygame.Rect(0, 800, 4000, 50)
             ],
             entities = [
                 utils.makeGranule(200, 200),
+                utils.makeGranule(450, 200),
+                utils.makeGranule(750, 40),
+                utils.makeGranule(2775, 240),
+                utils.makeGranule(3370, -10),
+
+                utils.makeSuperJump(350, 290),
+
                 utils.makeEnemyPatrol(450, 200, axis='x', distance=200),
                 utils.makeEnemyPatrol(750, 50, axis='y', distance=300, patrol_speed=3),
                 utils.makeEnemyPatrol(1650, 200, axis='y', distance=350, patrol_speed=4),
@@ -248,14 +260,20 @@ def loadLevel(levelNumber):
                 utils.makeSuperJump(335,-40),
                 utils.makeSuperJump(1320,-180),
                 utils.makeEnemy(520,175-25),
+                utils.makeEnemy(300,-125),
+                utils.makeEnemy(545,-175),
                 utils.makeEnemyPatrol(985, 50, axis='x', distance=250, patrol_speed=3),
                 utils.makeEnemyPatrol(1060, -50, axis='x', distance=250, patrol_speed=5),
                 utils.makeEnemyPatrol(860, -100, axis='y', distance=150, patrol_speed=2),
                 utils.makeEnemyPatrol(1070, -200, axis='y', distance=250, patrol_speed=5),
                 utils.makeGranule(445,155),
                 utils.makeGranule(600,155),
-                utils.makeGranule(1060,-50),
+                utils.makeGranule(510,-100),
                 utils.makeGranule(1050,-50),
+                utils.makeGranule(1105,115 ), #2
+                utils.makeGranule(885,-310),
+                utils.makeGranule(1320,-310 ), #2
+
                 globals.player1,  # Hráč
             ],
             deathPlatforms=[
@@ -313,6 +331,13 @@ def loadLevel(levelNumber):
 
                 utils.makeEnemyPatrol(710,300,'y',600,11),
                 utils.makeEnemyPatrol(910,300,'y',600,9),
+
+                utils.makeGranule(250,270),
+                utils.makeGranule(500,290),
+                utils.makeGranule(1090,210),
+                utils.makeGranule(355,0 ), #2
+                utils.makeGranule(525,-70),
+                utils.makeGranule(1025,-70 ), #2
             
                 globals.player1
             ],
@@ -331,8 +356,6 @@ def loadLevel(levelNumber):
             winFunc= wonLevel,
             loseFunc= lostLevel
         )
-
-
 
     # Resetovanie všetkých entít v úrovni
     for entity in globals.world.entities:

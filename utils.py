@@ -9,7 +9,6 @@ PixelOperator8 = pygame.font.Font('font\PixelOperator8.ttf', 24)
 PixelOperator8_Bold = pygame.font.Font('font\PixelOperator8_Bold.ttf', 24)
 
 # Funkcia na vykreslenie obrázka s priehľadnosťou
-# Inšpirované zdrojom: https://nerdparadise.com/programming/pygameblitopacity
 def blit_alpha(target, source, location, opacity):
     x = location[0]
     y = location[1]
@@ -19,15 +18,10 @@ def blit_alpha(target, source, location, opacity):
     temp.set_alpha(opacity)  # Nastaví priehľadnosť
     target.blit(temp, location)  # Vykreslí do cieľovej plochy
 
-
-
-
-
 # Funkcia na vykreslenie textu
 def drawText(screen, t, x, y, fg, alpha,Usedfont = font):
     # Vytvorenie textu pomocou vlastného fontu, s vybranou farbou (fg)
     text = Usedfont.render(t, True, fg)
-    
 
     # Získanie obdlžníka textu (na určenie pozície a rozmerov)
     text_rect = text.get_rect()
@@ -41,20 +35,19 @@ def drawText(screen, t, x, y, fg, alpha,Usedfont = font):
 # Načítanie obrázkov pre rôzne objekty v hre
 zivot_image = pygame.image.load('images\dachshund_zivot.png')
 
-granule0 = pygame.image.load('images\granule_0.png')
-granule1 = pygame.image.load('images\granule_1.png')
-granule2 = pygame.image.load('images\granule_2.png')
+granule_images = [
+    pygame.transform.scale(pygame.image.load(f'images/granule_{i}.png'), (40, 40))  #nastav na 50x50
+    for i in range(6)  # od 0 do 5
+]
 
 # Funkcia na vytvorenie granule (objektu, ktorý hráč zbiera)
 def makeGranule(x, y):
     entity = engine.Entity()  # Vytvorí novú entitu
-    entity.position = engine.Position(x, y, 23, 23)  # Nastaví pozíciu a veľkosť
-    entityAnimation = engine.Animation([granule0, granule1, granule2])  # Animácia granule
+    entity.position = engine.Position(x, y, 40, 40)  # Nastaví pozíciu a veľkosť
+    entityAnimation = engine.Animation(granule_images)  # Animácia granule
     entity.animations.add('idle', entityAnimation)  # Pridanie animácie do entity
     entity.type = 'collectable'  # Typ entity je zbierateľný objekt
     return entity
-
-
 
 super0 = pygame.image.load('images\platformy\platforma_071.png')
 super1 = pygame.image.load('images\platformy\platforma_072.png')

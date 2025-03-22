@@ -6,7 +6,7 @@ class ButtonUI:
     def __init__(self, keyCode, text, x, y, normal_img, hover_img=None, width=None, height=None, align_top=False, hover_text_color=None, align_center=True, font_size=30, font_path=None):
         """
         Inicializuje tlačidlo s možnosťou úpravy fontu a veľkosti textu.
-        
+
         :param keyCode: Kláves priradený k tlačidlu.
         :param text: Text, ktorý sa zobrazí na tlačidle.
         :param x: X-ová súradnica tlačidla.
@@ -36,16 +36,13 @@ class ButtonUI:
         # Načítanie obrázkov tlačidla
         self.normal_img = pygame.image.load(normal_img).convert_alpha()  # Normálny stav tlačidla
         self.hover_img = pygame.image.load(hover_img).convert_alpha() if hover_img else self.normal_img  # Hover efekt tlačidla
-
         # Nastavenie šírky a výšky tlačidla (ak nie sú zadané, použije sa veľkosť obrázka)
         self.width = width if width else self.normal_img.get_width()
         self.height = height if height else self.normal_img.get_height()
-
         # Zmena veľkosti obrázkov tlačidla na zadané rozmery
         self.normal_img = pygame.transform.scale(self.normal_img, (self.width, self.height))
         self.hover_img = pygame.transform.scale(self.hover_img, (self.width, self.height))
         self.image = self.normal_img  # Aktuálny obrázok tlačidla (normálny alebo hover)
-
         # Nastavenie fontu
         self.font_size = font_size  # Veľkosť písma
         self.font_path = font_path  # Cesta k vlastnému fontu

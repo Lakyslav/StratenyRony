@@ -40,49 +40,41 @@ class Keyboard:
         # Vráti True, ak bola klávesa práve uvoľnená
         return self.currentKeyStates[keyCode] == False and self.previousKeyStates[keyCode] == True
 
-
 # Trieda na spracovanie vstupu myši
 class Mouse:
     def __init__(self):
-        # Uchovávanie aktuálnych a predchádzajúcich stavov myši
-        self.currentButtonStates = None  # Aktuálny stav tlačidiel myši
-        self.previousButtonStates = None  # Predchádzajúci stav tlačidiel myši
-        self.x, self.y = 0, 0  # Súradnice myši
+        self.currentButtonStates = ()  # Initialize as empty tuple
+        self.previousButtonStates = ()
+        self.x, self.y = 0, 0
 
-    # Spracovanie vstupu myši
     def processInput(self):
-        # Uloženie aktuálnych stavov tlačidiel myši do predchádzajúcich stavov
         self.previousButtonStates = self.currentButtonStates
-        # Získanie aktuálnych stavov tlačidiel myši
-        self.currentButtonStates = pygame.mouse.get_pressed()
-        # Získanie aktuálnych súradníc myši
+        self.currentButtonStates = pygame.mouse.get_pressed()  # Returns tuple of 5 elements
         self.x, self.y = pygame.mouse.get_pos()
 
-    # Kontrola, či je dané tlačidlo myši stlačené
     def isButtonDown(self, button):
-        if self.currentButtonStates is None or self.previousButtonStates is None:
+        if button < 0 or button >= len(self.currentButtonStates):
             return False
-        # Vráti True, ak je tlačidlo myši stlačené
         return self.currentButtonStates[button] == 1
 
-    # Kontrola, či bolo tlačidlo myši práve stlačené
     def isButtonPressed(self, button):
-        if self.currentButtonStates is None or self.previousButtonStates is None:
+        # Check if button index is valid for both current and previous states
+        if (button < 0 
+            or button >= len(self.currentButtonStates) 
+            or button >= len(self.previousButtonStates)):
             return False
-        # Vráti True, ak bolo tlačidlo myši práve stlačené
-        return self.currentButtonStates[button] == 1 and self.previousButtonStates[button] == 0
+        return self.currentButtonStates[button] and not self.previousButtonStates[button]
 
-    # Kontrola, či bolo tlačidlo myši práve uvoľnené
     def isButtonReleased(self, button):
-        if self.currentButtonStates is None or self.previousButtonStates is None:
+        if (button < 0 
+            or button >= len(self.currentButtonStates) 
+            or button >= len(self.previousButtonStates)):
             return False
-        # Vráti True, ak bolo tlačidlo myši práve uvoľnené
-        return self.currentButtonStates[button] == 0 and self.previousButtonStates[button] == 1
+        return not self.currentButtonStates[button] and self.previousButtonStates[button]
 
     # Získanie aktuálnych súradníc myši
     def getPosition(self):
         return self.x, self.y
-
 
 # Trieda na spracovanie vstupu 
 class InputStream:

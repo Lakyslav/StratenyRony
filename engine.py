@@ -179,7 +179,6 @@ class CollectionSystem(System):
                         entity.battle.lives += 1
                         entity.score.score = 0
 
-
 class SuperJumpSystem(System):
     def check(self, entity):
         return entity.type == 'player'
@@ -191,7 +190,6 @@ class SuperJumpSystem(System):
                     globals.soundManager.playSound('granule') #Prehraj zvuk
                     entity.super_jump = True  # Aktivácia super skoku
   
-
 class BattleSystem(System):
     def check(self, entity):
         return entity.type == 'player' and entity.battle is not None
@@ -243,19 +241,17 @@ class CameraSystem(System):
             for bg_image, speed in globals.world.backgrounds:
                 bg_width, _ = bg_image.get_size()
 
-                # Get parallax scrolling offset
+                # Získanie parallax posunu
                 camera_x = int(entity.camera.worldX * speed)
                 offset = camera_x % bg_width
 
-                # Calculate two valid positions for the background
+                # Výpočet dvoch platných pozícií pre pozadie
                 first_x = -offset
                 second_x = first_x + bg_width
 
-                # Draw exactly two images only
+                # Vykreslenie presne dvoch obrázkov
                 screen.blit(bg_image, (first_x, 0))
                 screen.blit(bg_image, (second_x, 0))
-
-
 
         # Aktualizácia pozície kamery, ak sleduje nejakú entitu
         if entity.camera.entityToTrack is not None:
@@ -275,18 +271,17 @@ class CameraSystem(System):
             entity.camera.worldX = (currentX * 0.95) + (targetX * 0.05)
             entity.camera.worldY = (currentY * 0.95) + (targetY * 0.05)
         
-        # Filter entities to only render those within 1000 pixels of the player
-        visible_entities = [e for e in globals.world.entities if abs(e.position.rect.x - globals.player1.position.rect.x) < 1000]
-        # Filter platforms to only render those within 1000 pixels of the player
+        # Filtrovanie entít, aby sa vykreslili len tie, ktoré sú do 600 pixelov od hráča
+        visible_entities = [e for e in globals.world.entities if abs(e.position.rect.x - globals.player1.position.rect.x) < 600]
+        # Filtrovanie platforiem, aby sa vykreslili len tie, ktoré sú do 1000 pixelov od hráča
         visible_platforms = [p for p in globals.world.platforms if abs(p.x - globals.player1.position.rect.x) < 1000]
         
-        visible_win_platforms = [p for p in globals.world.winPlatforms if abs(p.x - globals.player1.position.rect.x) < 1000]
+        visible_win_platforms = [p for p in globals.world.winPlatforms if abs(p.x - globals.player1.position.rect.x) < 600]
         
-        # Print the number of visible entities
+        # Výpis počtu viditeľných entít
         #print(f"Number of visible entities: {len(visible_entities)}")
         #print(f"Number of visible platforms: {len(visible_platforms)}")
         #print(f"Number of visible win platforms: {len(visible_win_platforms)}")
-
 
         # Načítanie obrázkov platformy a víťaznej platformy
         platform_image = globals.world.platform_image
@@ -317,7 +312,7 @@ class CameraSystem(System):
                         screen.blit(win_scaled, (newPosRect.x + i * 50, newPosRect.y + j * 50))
 
         # Vykreslenie entít
-        for e in visible_entities:  # Use the filtered list of entities
+        for e in visible_entities:  # Použitie filtrovanej zoznamu entít
             s = e.state
             a = e.animations.animationList[s]
             a.draw(screen,
@@ -325,24 +320,21 @@ class CameraSystem(System):
                 (e.position.rect.y * entity.camera.zoomLevel) + offsetY,
                 e.direction == 'left', False, entity.camera.zoomLevel, 255)
 
-
         self.granule_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 0, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
         self.zivot_button = ui.ButtonUI(pygame.K_AMPERSAND, '', 0, 50, normal_img=r"images\UI\Money Panel EMPTY HUD.png",width=92,height=50,)
         self.super_button = ui.ButtonUI(pygame.K_AMPERSAND, '',  globals.SCREEN_SIZE[0]-210, 50, normal_img=r"images\UI\Button BG.png",width=210)
         self.granule_button.draw(screen)
         self.zivot_button.draw(screen)
 
-
-
         # Vykreslenie HUD pre entitu (skóre a životy)
         if entity.score is not None:
-            screen.blit(utils.granule0, (entity.camera.rect.x + 10, entity.camera.rect.y + 20))
+            screen.blit(utils.granule_images[0], (entity.camera.rect.x + 5, entity.camera.rect.y + 10))
             utils.drawText(screen, str(entity.score.score), entity.camera.rect.x + 50, entity.camera.rect.y + 20, globals.WHITE, 255, utils.PixelOperator8)
 
         # Vykreslenie životov pre entitu
         if entity.battle is not None:
             screen.blit(utils.zivot_image, (entity.camera.rect.x + 10, entity.camera.rect.y + 65))
-            utils.drawText(screen, str(entity.battle.lives), entity.camera.rect.x + 50, entity.camera.rect.y + 70, globals.WHITE, 255, utils.PixelOperator8)
+            utils.drawText(screen, str(entity.battle.lives), entity.camera.rect.x + 45, entity.camera.rect.y + 70, globals.WHITE, 255, utils.PixelOperator8)
 
         if entity.super_jump is not None:
             if entity.super_jump == True:
@@ -413,7 +405,6 @@ class Animation():
         newHeight = int(image.get_rect().h * zoomLevel)
         # Vykreslí obrázok s možným otočením a zväčšením
         screen.blit(pygame.transform.scale(pygame.transform.flip(image, flipX, flipY), (newWidth, newHeight)), (x, y))
-
 
 # Trieda pre skóre entity
 class Score():

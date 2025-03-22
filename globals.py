@@ -33,7 +33,6 @@ def saveProgress():
     with open('savegame.ini', 'w') as configfile:
         config.write(configfile)
 
-
 # Načítanie postupu zo súboru savegame.ini
 def loadProgress():
     global highestLevel, lastCompletedLevel, curentLevel, player1, levelTimers
@@ -56,7 +55,6 @@ def loadProgress():
             for i in range(1, highestLevel + 1):
                 levelTimers[i] = float(config['Timers'].get(f'level{i}', 0.0))
 
-
 # Premenná pre aktuálnu úroveň
 world = None  # Aktuálny svet (úroveň)
 
@@ -68,12 +66,10 @@ curentLevel = None
 
 levelTimers = {i: 0.0 for i in range(1, 6)}
 
-
 import os
 
 def checkFileExists(filename):
     return os.path.isfile(filename)
-
 
 # Rozmery obrazovkyz
 SCREEN_SIZE = (1024, 576)  # Veľkosť obrazovky (šírka, výška)

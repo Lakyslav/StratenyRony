@@ -7,7 +7,6 @@ import ui
 import soundmanager
 import sys
 
-
 # Základná trieda pre scénu, ktorá definuje základné metódy
 class Scene:
     def __init__(self):
@@ -36,11 +35,9 @@ class MainMenuScene(Scene):
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
-
     def onEnter(self):
         # Hranie hudby pri vstupe do hlavného menu
         globals.soundManager.playMusicFade('menu')
-
 
     def input(self, sm, inputStream):
         #  Skontroluj, či bolo stlačené tlačidlo Enter a súbor savegame.ini neexistuje.
@@ -83,7 +80,6 @@ class MainMenuScene(Scene):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE) or self.esc.on:
             sys.exit()
 
-
     def update(self, sm, inputStream):
         # Aktualizácia stavu tlačidiel
         self.enter.update(inputStream)
@@ -103,7 +99,6 @@ class MainMenuScene(Scene):
         self.settings.draw(screen)
         self.tutorial_button.draw(screen)  # Vykreslenie tlačidla pre návod
         self.esc.draw(screen)
-
 
 class EndgameScene:
     def __init__(self):
@@ -152,7 +147,6 @@ class EndgameScene:
             sm.pop()  # Návrat do predchádzajúcej scény (hlavné menu)
             sm.push(FadeTransitionScene([self], [MainMenuScene()]))
 
-
     def update(self, sm, inputStream):
         self.exit_button.update(inputStream)
 
@@ -174,17 +168,14 @@ class EndgameScene:
                 utils.drawText(screen, line, 50, y_offset, globals.WHITE, 255, utils.PixelOperator8)
                 y_offset += 30
         self.exit_button.draw(screen)
-        
 
 # Scéna s návodom
 class TutorialScene(Scene):
     def __init__(self):
         # Tlačidlo na návrat do hlavného menu
-        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 440, 438, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
-        self.controls_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 50, 50, normal_img=r"images\UI\Settings BG.png",width=222,height=462, align_top=True, align_center=False)
-        self.tutorials_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 272, 50, normal_img=r"images\UI\Settings BG.png",width=368,height=462, align_top=True, align_center=False)
-
-    
+        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 452, 438+50, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
+        self.controls_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 49, 50, normal_img=r"images\UI\Settings BG.png",width=222,height=462, align_top=True, align_center=False)
+        self.tutorials_text = ui.ButtonUI(pygame.K_AMPERSAND, '', 271, 50, normal_img=r"images\UI\Settings BG.png",width=703,height=462, align_top=True, align_center=False)
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
 
@@ -204,20 +195,37 @@ class TutorialScene(Scene):
         screen.blit(self.background, (0, 0))
 
         # Texty pre hlasitosť zvukových efektov a hudby
-        nadpis = f"  Ovládanie"
-        line1 = f"  W - skok"
-        line2 = f"  A - pohyb doľava"
-        line3 = f"  D - pohyb doprava"
-        line4 = f"  ESC - návrat späť"
+        nadpis = "  Ovládanie"
+        line1 = "  W / RMB - skok"
+        line4 = "  A - pohyb doľava"
+        line5 = "  D - pohyb doprava"
+        line6 = "  ESC - návrat späť"
+        line7 = "  P - pauza"
+        
         # Zostavíme dynamický text, ktorý chceme zobraziť na tlačidle
-        c_text = f"\n\n{nadpis}\n\n{line1}\n\n{line2}\n\n{line3}\n\n{line4}"
-        tut_text = f"\n\n  Návod\n\n  Cieľom hry je prejsť 5 úrovní\n  za čo najrýchleší čas a doniesť tým \n  strateného psíka Ronyho späť za\n  jeho rodinou. Hra sa odohráva v\n  niekoľkých rôznych prostrediach\n  ako napríklad lúka,hory, a les.\n  Počas priebehu hry je možné sa\n  hocikedy vrátiť na\n  predchádzajúcu obrazovku\n  pomocou tlačidla ESC. Cieľ \n  každej úrovne je označený\n  krabicou s otáznikom"
+        c_text = f"\n\n{nadpis}\n\n{line1}\n\n{line4}\n\n{line5}\n\n{line6}\n\n{line7}"
+        tut_text = (
+            "\n\n    Návod\n\n"
+            "      Cieľom hry je prejsť 5 úrovní za čo najrýchlejší čas a doniesť\n"
+            "   tým strateného psíka Ronyho späť za jeho rodinou.\n\n"
+            "      Počas priebehu hry je možné sa hocikedy vrátiť na predošlú\n"
+            "   obrazovku pomocou tlačidla ESC.\n\n"
+            "      Cieľ každej úrovne je označený krabicou s otáznikom. Zdvihnutie\n"
+            "   troch granúl pridá jeden život a vypitie blikajúceho nápoja dočasne\n"
+            "   zvýši výšku Ronyho skoku.\n\n"
+            "      Hra sa ovláda pomocou kláves: W / pravé tlačidlo myši pre skok,\n"
+            "   A a D pre pohyb do strán. Alebo hráč môže použiť tlačidlá v hre,\n"
+            "   ktoré sa aktivujú kliknutím myši a ostanú aktívne, kým nie sú\n"
+            "   stlačené znovu alebo sa myš neposunie mimo oblasť tlačidiel."
+        )
         # Nastavíme text do tlačidla (ako text na pozadí tlačidla)
         self.controls_text.text = c_text
         self.tutorials_text.text = tut_text
+        
         # Vykreslíme tlačidlo so správnym textom
         self.controls_text.draw(screen)
         self.tutorials_text.draw(screen)
+        
         # Vykreslenie tlačidla na návrat
         self.menu_button.draw(screen)
 
@@ -294,22 +302,17 @@ class SettingsScene(Scene):
         self.menu_button.update(inputStream)
         self.dynamic_button.update(inputStream)
 
-
     def draw(self, sm, screen):
         # Vykreslenie pozadia celej scény
         screen.blit(self.background, (0, 0))
-
         # Texty pre hlasitosť zvukových efektov a hudby
         nadpis = f"Nastavenia"
         sfx_text = f"Hlasitosť zvuku: {self.sfx_volume:.1f}"
         music_text = f"Hlasitosť hudby: {self.music_volume:.1f}"
-
         # Zostavíme dynamický text, ktorý chceme zobraziť na tlačidle
         dynamic_text = f"\n\n{nadpis}\n\n{sfx_text}\n\n{music_text}"
-
         # Nastavíme text do tlačidla (ako text na pozadí tlačidla)
         self.dynamic_button.text = dynamic_text
-
         # Vykreslíme tlačidlo so správnym textom
         self.dynamic_button.draw(screen)
         self.increase_sfx_button.draw(screen)
@@ -320,21 +323,14 @@ class SettingsScene(Scene):
 
 class LevelSelectScene(Scene):
     def __init__(self):
-
-
         self.a_button = ui.ButtonUI(pygame.K_LEFT, '', 260 , 350, normal_img=r"images\UI\Arrow Left.png", hover_img=r"images\UI\Arrow Left-on.png", width=24, height=42)  # Tlačidlo pre predchádzajúcu úroveň
         self.d_button = ui.ButtonUI(pygame.K_RIGHT, '', 420-24, 350, normal_img=r"images\UI\Arrow Right.png", hover_img=r"images\UI\Arrow Right-on.png", width=24, height=42)  # Tlačidlo pre nasledujúcu úroveň
-
-
         # Definovanie tlačidiel pre výber úrovne
         self.esc = ui.ButtonUI(pygame.K_ESCAPE, 'Menu', 65, 425, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
         self.enter_button = ui.ButtonUI(pygame.K_RETURN, 'Spustiť', 415, 425, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)  # Tlačidlo na výber úrovne
-
         self.pole = ui.ButtonUI(pygame.K_AMPERSAND, '', 50, 50, normal_img=r"images\UI\Settings BG.png",width=580,height=462, align_top=True, align_center=False)
-
         self.background = pygame.image.load('images\menu\orig.png').convert()
         self.background = pygame.transform.scale(self.background, globals.SCREEN_SIZE)
-
         # Načítanie obrázkov pre jednotlivé úrovne
         self.level_images = {
             i: {
@@ -359,7 +355,6 @@ class LevelSelectScene(Scene):
         self.d_button.update(inputStream)
         self.enter_button.update(inputStream)
         self.pole.update(inputStream)
-
 
     def input(self, sm, inputStream):
         # Klávesové vstupy pre výber úrovne
@@ -421,42 +416,30 @@ class GameScene(Scene):
         self.inputSystem = engine.InputSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.animationSystem = engine.AnimationSystem()
-
         # Časovač 
         self.display_timer = 0  
         self.start_time = 0  
         self.paused_time = 0  
-
         self.paused = False  # Premenná určujúca, či je hra pozastavená
-
         # Tlačidlá pre pohyb
         self.a_active = False
         self.d_active = False
         self.w_active = False
-
         self.button_a = ui.ButtonUI(pygame.K_a, 'A', globals.SCREEN_SIZE[0]//2 - 51, globals.SCREEN_SIZE[1] - 70, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
         self.button_w = ui.ButtonUI(pygame.K_w, 'W', globals.SCREEN_SIZE[0]//2 - 25, globals.SCREEN_SIZE[1] - 111, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
         self.button_d = ui.ButtonUI(pygame.K_d, 'D', globals.SCREEN_SIZE[0]//2 + 1, globals.SCREEN_SIZE[1] - 70, normal_img=r"images\UI\Inventory Cell.png", width=50, height=50, hover_text_color=globals.MUSTARD, font_path=r"font\PixelOperator8.ttf", font_size=24)
-
         # Hud tlačidlá
         self.time_button = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]-210, 0, normal_img=r"images\UI\Button BG.png", width=210)
-
         # Tlačidlo na pauzu
         self.pause_button = ui.ButtonUI(pygame.K_p, 'II', globals.SCREEN_SIZE[0]//2 - 25, 10, normal_img=r"images\UI\Button BG.png", width=50, height=50)
-
         # **Tlačidlá pre úpravu hlasitosti počas pauzy**
-
         self.sfx_text = ui.ButtonUI(pygame.K_AMPERSAND, '', globals.SCREEN_SIZE[0]//2 - 200,globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Button BG.png", width=300)
         self.music_text = ui.ButtonUI(pygame.K_AMPERSAND, '',globals.SCREEN_SIZE[0]//2 - 200,globals.SCREEN_SIZE[1]//2 - 25 , normal_img=r"images\UI\Button BG.png", width=300)
-
         self.increase_sfx_button = ui.ButtonUI(pygame.K_w, '+', globals.SCREEN_SIZE[0]//2 + 101, globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
         self.decrease_sfx_button = ui.ButtonUI(pygame.K_s, '-', globals.SCREEN_SIZE[0]//2 + 142, globals.SCREEN_SIZE[1]//2 - 70, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
-
         self.increase_music_button = ui.ButtonUI(pygame.K_UP, '+', globals.SCREEN_SIZE[0]//2 + 101, globals.SCREEN_SIZE[1]//2 - 25, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
         self.decrease_music_button = ui.ButtonUI(pygame.K_DOWN, '-', globals.SCREEN_SIZE[0]//2 + 142, globals.SCREEN_SIZE[1]//2 - 25, normal_img=r"images\UI\Inventory Cell.png", width=44, height=44)
-
-        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Výber úrovní',  globals.SCREEN_SIZE[0]//2 - 193//2,  globals.SCREEN_SIZE[1]//2 + 20, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
-
+        self.menu_button = ui.ButtonUI(pygame.K_ESCAPE, 'Menu',  globals.SCREEN_SIZE[0]//2 - 193//2,  globals.SCREEN_SIZE[1]//2 + 20, normal_img=r"images\UI\Button BG shadow.png",hover_img=r"images\UI\Button BG.png",hover_text_color=globals.MUSTARD)
 
     def onEnter(self):
         # Resetuj časovač
@@ -496,11 +479,10 @@ class GameScene(Scene):
                 globals.soundManager.setMusicVolume(max(globals.soundManager.musicVolume - 0.1, 0.0))
             if self.menu_button.on or inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
                 sm.pop()  # Návrat na predchádzajúcu scénu
-                sm.push(FadeTransitionScene([self], []))
-
+                sm.push(FadeTransitionScene([self], [MainMenuScene()]))
 
             return  
-
+        
         # Skontrolovanie výhry alebo prehry
         if globals.world.isWon():
             globals.levelTimers[globals.curentLevel] = self.display_timer
@@ -562,8 +544,10 @@ class GameScene(Scene):
             globals.player1.intention.moveRight = True
         else:
             self.d_active = False  
+        
+        mouse_buttons = pygame.mouse.get_pressed()
 
-        if self.w_active and self.button_w.is_mouse_over(mouse_x, mouse_y):
+        if (self.w_active and self.button_w.is_mouse_over(mouse_x, mouse_y)) or mouse_buttons[2]:
             globals.player1.intention.jump = True
         else:
             self.w_active = False  
@@ -580,7 +564,7 @@ class GameScene(Scene):
         milliseconds = int((self.display_timer * 100) % 100)
         time_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
 
-        # Overlay a text "HRA POZASTAVENÁ" ak je pauza
+        # PAUZA 
         if self.paused:
             overlay = pygame.Surface(globals.SCREEN_SIZE)
             overlay.fill(globals.BLACK)
@@ -600,11 +584,8 @@ class GameScene(Scene):
             self.menu_button.draw(screen)
 
         utils.drawText(screen, time_text, globals.SCREEN_SIZE[0] - 160, 10, globals.WHITE, 255, utils.PixelOperator8)
-
-
         self.pause_button.draw(screen)
-
-        
+    
 class WinScene(Scene):
     def __init__(self):
         self.alpha = 0
@@ -615,7 +596,7 @@ class WinScene(Scene):
         globals.soundManager.playMusicFade('won')
 
     def onExit(self):
-        globals.saveProgress()  # Save progress here
+        globals.saveProgress()  # ulož
 
         # Prehrávanie hudby pri opustení scény
         globals.soundManager.playMusicFade('level')
@@ -633,9 +614,9 @@ class WinScene(Scene):
 
         # Skontrolovanie stlačenia Enter tlačidla pre pokračovanie
         if self.enter.on or inputStream.keyboard.isKeyPressed(pygame.K_RETURN):
-            globals.saveProgress()  # Save progress here
+            globals.saveProgress()  # ULOŽ
             globals.loadProgress()
-            level.loadLevel(globals.curentLevel)  # Load the next level
+            level.loadLevel(globals.curentLevel)  
             sm.set([FadeTransitionScene([self], [LevelSelectScene(),GameScene()])]) # Prechod na nasledujúcu úroveň
 
     def draw(self, sm, screen):
@@ -646,9 +627,7 @@ class WinScene(Scene):
         bgSurf = pygame.Surface(globals.SCREEN_SIZE)
         bgSurf.fill((globals.BLACK))
         utils.blit_alpha(screen, bgSurf, (0, 0), self.alpha * 0.7)
-
         utils.drawText(screen, 'Vyhral si!', 50, 50, globals.WHITE, self.alpha)
-
         # Vykreslenie tlačidiel (Esc, Pokračovať)
         self.esc.draw(screen, alpha=self.alpha)
         self.enter.draw(screen, alpha=self.alpha)
@@ -673,7 +652,6 @@ class LoseScene(Scene):
         self.esc.update(inputStream)  # Aktualizácia ESC tlačidla
         self.restart_button.update(inputStream)  # Aktualizácia tlačidla pre reštart
 
-
     def input(self, sm, inputStream):
         # Skontrolovanie stlačenia ESC tlačidla pre návrat
         if self.esc.on or inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
@@ -683,7 +661,6 @@ class LoseScene(Scene):
 
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.set([FadeTransitionScene([self], [LevelSelectScene()])])
-
 
         # Skontrolovanie stlačenia tlačidla R pre reštart
         if self.restart_button.on or inputStream.keyboard.isKeyPressed(pygame.K_r):

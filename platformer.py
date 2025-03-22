@@ -44,7 +44,7 @@ while running:
     inputStream.processInput()  # Spracovanie vstupu z klávesnice a myši
     globals.soundManager.update()  # Aktualizácia zvukového manažéra
 
-    if sceneManager.isEmpty():  # Ak je zoznam scén prázdny, končíme hru
+    if sceneManager.isEmpty():  # Ak je zoznam scén prázdny ukončíme hru
         running = False
     
     #print(f"FPS: {int(clock.get_fps())}")

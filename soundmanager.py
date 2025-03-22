@@ -7,7 +7,6 @@ class SoundManager:
 
     def __init__(self, initial_sound_volume=0.2, initial_music_volume=0.2):
         pygame.mixer.init()  # Spustíme systém na prehrávanie zvukov a hudby
-        
         # Načítame nastavenia z INI súboru, ak existuje
         self.config = configparser.ConfigParser()
         self.config.read('settings.ini')
